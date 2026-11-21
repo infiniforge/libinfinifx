@@ -152,7 +152,7 @@ internal class BuiltinRuntime(
                     "uGlow" to parameters.float("glow"),
                     "uIdleHeight" to parameters.float("idleHeight"),
                     "uAnimationSpeed" to parameters.float("animationSpeed"),
-                    "uBoltWidth" to parameters.float("boltWidth"),
+                    "uBranchCount" to parameters.int("branchCount"),
                     "uPaletteCount" to (frame.channels.values["fx.palette.count"]?.toInt()?.coerceIn(1, 8) ?: 1),
                     "uPalette0" to framePalette(frame.channels.values, 0),
                     "uPalette1" to framePalette(frame.channels.values, 1),

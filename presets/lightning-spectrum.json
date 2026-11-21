@@ -13,7 +13,7 @@
         "parameters": {
           "gain": { "type": "float", "value": 2.6 },
           "maxHeight": { "type": "float", "value": 0.88 },
-          "barGap": { "type": "float", "value": 0.14 },
+          "branchCount": { "type": "int", "value": 6 },
           "glow": { "type": "float", "value": 0.9 },
           "idleHeight": { "type": "float", "value": 0.04 }
         }

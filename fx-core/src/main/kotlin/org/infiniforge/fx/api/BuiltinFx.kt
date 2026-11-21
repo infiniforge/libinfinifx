@@ -106,14 +106,14 @@ object BuiltinFx {
             ),
         ),
         FxEffectDescriptor(
-            id = "generator:lightning-spectrum", version = 4, title = "Lightning spectrum",
-            description = "Draws fast, overlapping outlined lightning traces for 16 frequency bands on a transparent layer; optional fx.palette channels color each outline.",
+            id = "generator:lightning-spectrum", version = 5, title = "Lightning spectrum",
+            description = "Draws fast, hairline lightning traces with configurable side branches for 16 frequency bands on a transparent layer; optional fx.palette channels color each trace.",
             category = FxEffectCategory.GENERATOR, inputPorts = emptyList(),
             metadataInterests = setOf("audio.bands", "channel:fx.palette.colors"),
             parameters = listOf(
                 f("gain", 1f, 0f, 5f, description = "Linear amplification applied to normalized spectrum bands."),
                 f("maxHeight", 1f, .1f, 1f, description = "Maximum lightning height as a fraction of the full output height."),
-                f("boltWidth", 8f, 1f, 12f, "x", "Lightning stroke width multiplier; the default lets neighboring bolts overlap."),
+                i("branchCount", 6, 1, 8, "tendrils", "Thin side tendrils per lightning trace; each tendril may form a short secondary twig."),
                 f("animationSpeed", 20f, 0f, 40f, "x", "Procedural lightning evolution speed relative to real time."),
                 f("glow", .9f, 0f, 2f, description = "Outline, electric core, and fork brightness."),
                 f("idleHeight", .04f, 0f, .2f, description = "Small autonomous baseline used only when spectrum bands are absent."),

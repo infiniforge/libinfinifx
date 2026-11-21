@@ -94,15 +94,17 @@ Start at [docs/README.md](docs/README.md). It links architecture, API, rendering
 ## Lightning-spectrum generator
 
 `generator:lightning-spectrum` is an original GLES generator that draws only
-jagged outlined lightning paths across the full output width and height by
-default; it does not draw filled rectangular bars. It reads optional normalized
+lightning paths across the full output width and height by default; it does not
+draw filled rectangular bars. Its core strokes use screen-space antialiasing at
+roughly one output pixel. Six thin side tendrils and a short secondary twig per
+tendril are drawn for each frequency trace by default. It reads optional normalized
 `AudioFrameMetadata.bands`, makes present zero-valued bands exactly zero height,
 and emits an optional idle preview only when bands are missing. Hosts may send
 up to eight sRGB colors through `FxFrameInput.channels` using
 `fx.palette.count` and `fx.palette.color.<index>.{r,g,b}` channels. Bands select
 these colors in order and wrap. Missing palette channels use a cyan fallback.
-Hosts can adjust width, linear gain, height, bolt width, animation speed, glow,
+Hosts can adjust width, linear gain, height, tendril count, animation speed, glow,
 and idle baseline through graph parameters. The default animation evolves at
-20× real time and the default 8× stroke width allows adjacent lightning to overlap.
-Use the `lightning-spectrum` preset directly or alpha-blend its output over an
-image. Shader-driver and device visual acceptance still need a GLES device.
+20× real time. Use the `lightning-spectrum` preset directly or alpha-blend
+its output over an image. Shader-driver and device visual acceptance still need
+a GLES device.

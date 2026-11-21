@@ -110,3 +110,11 @@ The Infinimedia diagnostic log showed GLES rejecting every graph at shader compi
 - PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain` — GLES AAR and sample APK assembled.
 - The `generator:lightning-spectrum` descriptor is v4. Its `animationSpeed` default is 20× and `boltWidth` is 8×; both have bounded runtime controls. Audio-band heights are unchanged by animation speed.
 - `adb devices -l` reports no attached device. Actual animation speed, stroke overlap appearance, GLES driver compilation, and device performance remain **not verified on device**.
+
+### Random hairline lightning — 2026-11-21
+
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./gradlew :fx-core:test :fx-gles:test --no-daemon --max-workers=1 --console=plain` — 26 test executions (10 core; 8 debug GLES; 8 release GLES), zero failures, errors, or skips. Tests cover descriptor v5's six-tendril default, one-pixel derivative antialiasing, and the absence of sine calls in the lightning shader.
+- PASS: `python3 scripts/validate-shaders.py` — all 12 shader stages passed glslang source validation after normalization.
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain` — GLES AAR and sample APK assembled successfully.
+- The generator uses seeded hash interpolation for irregular lightning spines, tendrils, secondary twigs, idle pulse, and flicker; procedural animation remains 20×. `branchCount` replaces `boltWidth` and defaults to six side tendrils, each with a shorter twig. The stroke core is approximately one output pixel with screen-space antialiasing.
+- `adb devices -l` reports no attached device. Actual thin-line appearance, branch density, GLES driver compilation, and performance remain **not verified on device**.
