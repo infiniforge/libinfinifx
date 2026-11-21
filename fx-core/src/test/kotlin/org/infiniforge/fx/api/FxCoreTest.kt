@@ -57,6 +57,17 @@ class FxCoreTest {
         assertEquals(.75f, meta.beatPhase)
     }
 
+    @Test fun rotozoomAndKaleidoscopePresetsAreRegisteredAndValidate() {
+        for (presetName in listOf("album-art-rotozoom", "kaleidoscope")) {
+            val preset = BuiltinPresets.all.getValue(presetName)
+            val plan = FxGraphValidator.validate(preset.graph, BuiltinFx.byId)
+            assertEquals(1, plan.orderedNodes.size)
+            assertEquals(presetName, preset.name)
+        }
+        assertTrue("distort:rotozoom" in BuiltinFx.byId)
+        assertTrue("distort:kaleidoscope" in BuiltinFx.byId)
+    }
+
     @Test fun fixedStepPlanBoundsCatchupAndResetsOnLongGaps() {
         val clock = FxFixedStepClock(stepSeconds = .01f, maxSteps = 3)
         assertEquals(0, clock.plan(0).steps)

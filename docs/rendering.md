@@ -31,3 +31,8 @@ The backend disables blending for its fullscreen shader passes and writes each g
 A source/output resize resets private simulation history. Pausing can call resetHistory(PAUSED); heat buffers clear, while water's elapsed autonomous time is retained. Resume may reset other temporal state. On EGL context loss, do not reuse the engine. Drop it and create a new one from the new current context; the old context owns and frees its dead names. close normally requires the original context current.
 
 Surface lifecycle remains app-owned. Do not call rendering from an audio callback, MediaCodec callback, or UI thread unless that is the designated GL thread. Export/readback, synchronization fences across contexts, external OES import, and shared-context resource ownership are future work.
+
+
+## Graph source geometry
+
+For effect graphs, the executor copies the input once into a pooled RGBA8 target at destination dimensions, clearing the surrounding area and placing the source inside `FxGeometry.displayRect` after applying its crop and orientation. Sequential effects and branches therefore share a stable destination-sized canvas without stretching a non-matching source aspect ratio at intermediate passes. A source-only pass-through bypass skips this normalization and draws directly into the requested display rectangle. The source dimensions in frame metadata remain the original logical raster for CRT/LCD sampling.

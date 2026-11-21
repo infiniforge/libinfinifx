@@ -1,6 +1,6 @@
 # Documentation index
 
-Current maturity: first source implementation with passing portable JVM and Android preset-codec tests, a successful local Android AAR/sample build, and glslang shader syntax validation. GPU-driver shader validation, visual output, device lifecycle, and performance still need device acceptance.
+Current maturity: source implementation includes pass-through, compositing, CRT/LCD, water/heat, fire, rotozoom, and kaleidoscope. Recorded portable JVM/Android builds and shader checks apply to the previous baseline; the current unreleased effect and geometry updates still need fresh build checks. GPU-driver shader validation, visual output, device lifecycle, and performance need device acceptance.
 
 - [Architecture](architecture.md) — modules, graph execution, state ownership, and design limits.
 - [API](api.md) — implemented Kotlin classes, ownership, thread rules, examples, and errors.
@@ -8,7 +8,7 @@ Current maturity: first source implementation with passing portable JVM and Andr
 - [Effects](effects.md) — implemented descriptors, defaults, ranges, and limitations.
 - [Simulation](simulation.md) — heat field, procedural water surface, stepping, and reset policy.
 - [Audio metadata](audio-metadata.md) — units, events, sanitization, and host mapping.
-- [Presets](presets.md) — schema-v1 JSON and the six example graphs.
+- [Presets](presets.md) — schema-v1 JSON and the eight example graphs.
 - [Integration](integration.md) — source dependency setup and app-specific future integration boundaries.
 - [Builds and testing](builds-and-testing.md) — exact commands, shader syntax helper, and recorded evidence.
 - [Compatibility](compatibility.md) — SDK/GLES support, budgets, schema compatibility, and unsupported targets.

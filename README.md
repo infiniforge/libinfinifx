@@ -4,9 +4,9 @@ A standalone Android library for composable GLES 3.0 image effects, simulation f
 
 ## Initial implementation status
 
-The repository contains a portable Kotlin API/graph validator and a GLES 3.0 Android backend. The built-in source includes pass-through, CRT, LCD, procedural water refraction, a private heat-field simulation with heat ripple and fire rendering, and alpha/additive layer composition. Six JSON examples and a runnable Android sample are included.
+The repository contains a portable Kotlin API/graph validator and a GLES 3.0 Android backend. Built-ins include pass-through, CRT, LCD, album-art rotozoom, kaleidoscope, procedural water refraction, a private heat-field simulation with heat ripple and fire rendering, and alpha/additive layer composition. Eight JSON examples and a runnable Android sample are included.
 
-The portable graph and metadata tests pass on JDK 21 targeting JVM 17. With the local Android SDK configured, the GLES AAR and sample APK also build successfully. Shader sources pass a glslang syntax check. GPU-driver compilation, sample runtime, visual correctness, device lifecycle, and performance are **not verified on device**. See [roadmap](docs/roadmap.md) and [build evidence](docs/builds-and-testing.md).
+Recorded baseline evidence from the prior 0.1.0 revision includes passing portable graph/metadata tests, local GLES AAR/sample APK assembly, and glslang shader syntax validation. The 2026-11-20 working revision passes a fresh portable test, Android AAR/sample build, and GLSL syntax check for rotozoom, kaleidoscope, and graph geometry normalization; the Infinimedia host adapter is a separate checkout and still needs its own build. Device visuals remain unverified. GPU-driver compilation, visual correctness, device lifecycle, and performance are **not verified on device**. See [roadmap](docs/roadmap.md) and [build evidence](docs/builds-and-testing.md).
 
 ## Standalone build
 
@@ -71,6 +71,8 @@ See [API](docs/api.md) for exact lifecycle and error behavior. The sample Activi
 - water-over-image
 - heat-haze
 - audio-fire-overlay
+- album-art-rotozoom
+- kaleidoscope
 
 Preset JSON is versioned independently from the library package. See [preset schema and examples](docs/presets.md).
 

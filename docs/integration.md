@@ -1,12 +1,14 @@
 # Host integration guidance
 
-No consumer application is modified or imported by this repository. The source dependency is currently unpublished; pin a Git submodule commit in each host repository and use Gradle composite substitution.
+No consumer application is imported by this repository. The source dependency is currently unpublished; pin an exact library commit using each host repository's established dependency lock/fetch workflow and use Gradle composite substitution. A Git submodule is suitable only for hosts that already use submodules.
 
 ## Standalone source dependency
 
-From an app repository, add the library at a declared path and commit the gitlink:
+For a host that uses Git submodules, the library can be added at a declared path:
 
     git submodule add https://github.com/infiniforge/libinfinifx.git libraries/libinfinifx
+
+For hosts with a source lock and fetch script, declare the repository URL and reviewed commit in that lock, then fetch it into the path used by the composite build. Do not rely on sibling workspace checkouts.
 
 In host settings.gradle.kts:
 
@@ -18,13 +20,13 @@ In the app module's build.gradle.kts:
         implementation("io.github.infiniforge.libinfinifx:fx-gles:0.1.0")
     }
 
-The included build substitutes this coordinate with its source project. Pin the submodule to an explicit reviewed commit; do not depend on a sibling checkout or a Maven artifact claim. fx-gles exposes fx-core transitively. Keep host SDK/AGP settings independent and verify that the composite substitution resolves against the app's Gradle version.
+The included build substitutes this coordinate with its source project. Pin an explicit reviewed commit; do not depend on a sibling checkout or a Maven artifact claim. fx-gles exposes fx-core transitively. Keep host SDK/AGP settings independent and verify that the composite substitution resolves against the app's Gradle version.
 
 ## Infinimedia
 
-InfiniMedia owns playback, the visual pane, Android surface lifecycle, and its existing pure Kotlin visualization-engine. It also owns the bridge from libinfinisound's existing PCM/playback analysis to the optional FxFrameInput.audio snapshot. Do not duplicate audio analysis here or refactor the existing visualizer as part of adding this dependency.
+Infinimedia consumes the pinned `fx-gles` source dependency in `modules/viewer-audio`. Its app-owned `FxArtworkView` creates and closes `GlesFxEngine` on its GLES 3 render thread, uploads bitmap artwork to a host-owned `GL_TEXTURE_2D`, and draws into its transparent Android surface. `RandomFxPipeline` creates a two-stage DAG from built-in filter IDs and replaces one stage with a different random effect when the playlist visual item changes. This random policy is temporary test behavior; it is isolated from the renderer and can later be replaced with deliberate effect selection without changing the library contracts.
 
-A future integration can acquire/copy a GL_TEXTURE_2D on the visual rendering thread, use the player presentation clock and 16 existing spectrum bands, build the app-owned adapter described in [audio metadata](audio-metadata.md), and render to a distinct target before display. Preserve video/image paths when audio is absent. No Infinimedia EGL surface or texture adapter exists in this library yet.
+The host maps the existing smoothed 16 spectrum bands and VU readings from libinfinisound's PCM analysis path into normalized `AudioFrameMetadata` RMS/peak and low/mid/high bands. It does not add a second audio analyzer or synthesize onset/beat events. Rotozoom can respond to energy now; hosts that already have stable beat/onset events may pass their timestamp and unique event IDs. Animated image, video (`GL_TEXTURE_EXTERNAL_OES` in the current playback path), and ANSI presentation remain on their existing paths; the current FX backend accepts only `GL_TEXTURE_2D`. The original artwork view remains a fallback under the effects surface. No player UI, playback logic, or app source is imported by this library.
 
 ## InfiniPlay
 

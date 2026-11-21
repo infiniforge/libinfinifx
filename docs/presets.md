@@ -23,6 +23,8 @@ Connections use from, to, and input; source is the reserved input node ID. Every
 - lcd-gameboy-dmg — source → display:lcd → output.
 - water-over-image — source → distort:water-refraction → output.
 - heat-haze — source → distort:heat-ripple → output.
+- album-art-rotozoom — source → distort:rotozoom → output; optional energy/onset-driven zoom and rotation.
+- kaleidoscope — source → distort:kaleidoscope → output.
 - audio-fire-overlay — source + generator:fire → composite:blend → output.
 
 Examples are checked in under ../presets/. For example, [water-over-image.json](../presets/water-over-image.json) has no hardware-specific fields.

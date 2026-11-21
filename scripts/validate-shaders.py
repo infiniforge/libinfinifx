@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "fx-gles/src/main/kotlin/org/infiniforge/fx/gles/FxShaders.kt"
-EXPECTED = {"VERTEX", "COPY", "CRT", "LCD", "WATER", "HEAT_STEP", "HEAT_RIPPLE", "FIRE", "BLEND"}
+EXPECTED = {"VERTEX", "COPY", "CRT", "LCD", "ROTOZOOM", "KALEIDOSCOPE", "WATER", "HEAT_STEP", "HEAT_RIPPLE", "FIRE", "BLEND"}
 
 
 def main() -> int:

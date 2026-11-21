@@ -70,7 +70,8 @@ class GlesFxEngine(
             uvRect = frame.geometry.contentRect,
             orientationDegrees = frame.geometry.displayOrientationDegrees,
         )
-        val outputTarget = target.copy(viewport = frame.geometry.displayRect.within(target.viewport))
+        val bypassTarget = target.copy(viewport = frame.geometry.displayRect.within(target.viewport))
+        val outputTarget = target.copy(viewport = target.viewport)
 
         val plan = try {
             FxGraphValidator.validate(graph, BuiltinFx.byId)
@@ -103,8 +104,23 @@ class GlesFxEngine(
 
             if (graph.outputNodeId == FxGraph.SOURCE_NODE_ID) {
                 val source = sourceTexture ?: return FxRenderResult.Failure("missing-source", "Pass-through needs a source texture.")
-                passes.draw(FxShaders.COPY, outputTarget, listOf(source), mapOf("uInput" to 0))
+                passes.draw(FxShaders.COPY, bypassTarget, listOf(source), mapOf("uInput" to 0))
                 return FxRenderResult.Success()
+            }
+
+            // Normalize input to destination geometry once so graph branches and sequential
+            // passes preserve source aspect instead of stretching intermediate textures.
+            var graphSourceTexture = sourceTexture
+            if (sourceTexture != null && graph.connections.any { it.fromNodeId == FxGraph.SOURCE_NODE_ID }) {
+                val normalized = pool.acquire(target.width, target.height).also(acquiredThisFrame::add)
+                passes.clear(normalized.target())
+                passes.draw(
+                    FxShaders.COPY,
+                    normalized.target().copy(viewport = frame.geometry.displayRect.within(target.viewport)),
+                    listOf(sourceTexture),
+                    mapOf("uInput" to 0),
+                )
+                graphSourceTexture = normalized.input()
             }
 
             for (node in plan.orderedNodes) {
@@ -117,7 +133,7 @@ class GlesFxEngine(
                 val inputs = mutableMapOf<String, FxTexture>()
                 for (edge in edges) {
                     val texture = if (edge.fromNodeId == FxGraph.SOURCE_NODE_ID) {
-                        sourceTexture
+                        graphSourceTexture
                     } else {
                         outputSurfaces[edge.fromNodeId]?.input()
                     }

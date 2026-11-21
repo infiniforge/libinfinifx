@@ -43,4 +43,4 @@ Frame geometry carries source crop/orientation and destination placement. The en
 
 ## Deliberate omissions
 
-There is no general visual-programming editor, user GLSL, shader hot reload, shared mutable simulation, temporal CRT phosphor or LCD ghost history, arbitrary layer stacks beyond explicit graph nodes, GPU timestamp query API, export/readback pipeline, GLES2/Vulkan/AGSL backend, or application integration. Those can be added behind the same contracts after runtime acceptance.
+There is no general visual-programming editor, user GLSL, shader hot reload, shared mutable simulation, temporal CRT phosphor or LCD ghost history, arbitrary layer stacks beyond explicit graph nodes, GPU timestamp query API, export/readback pipeline, or GLES2/Vulkan/AGSL backend. An Infinimedia artwork/static-image host adapter now consumes the public API; other application integrations remain separate and require runtime acceptance.

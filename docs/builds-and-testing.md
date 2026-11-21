@@ -38,6 +38,14 @@ Environment: Termux on Android, Linux aarch64, OpenJDK 21.0.13.1, Gradle 9.7.1 w
 - `adb devices -l` reported no connected device. No shader-driver compilation, screenshot comparison, surface/context recreation, GPU timing, memory stress, FPS, thermal, or sample runtime test was run. Visual correctness and performance are **not verified on device**.
 - PASS: GitHub Actions run [44845197052](https://github.com/infiniforge/libinfinifx/actions/runs/44845197052) for commit `c092d64` completed successfully on an SDK-equipped hosted runner. It ran the combined test/AAR/APK build; it does not perform GPU visual acceptance. The runner added non-failing maintenance annotations for pinned Actions v4/Node runtime versions.
 
+## Unreleased effect and geometry update (2026-11-20)
+
+- PASS: `./gradlew :fx-core:test --max-workers=1 --console=plain` — 7 portable tests passed, including the new rotozoom/kaleidoscope registry and preset validation.
+- PASS: `python3 scripts/validate-shaders.py` — 11 GLES shader stages passed glslang syntax validation, including rotozoom and kaleidoscope.
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain` — portable tests, fx-gles Android unit-test task, AAR assembly, and sample APK assembly completed.
+- A first `./build.sh` without Android SDK environment failed during `:fx-gles:testDebugUnitTest` dependency setup because SDK location was not set. The documented retry with `ANDROID_HOME` passed.
+- The Infinimedia adapter and its host-side unit tests have not yet been built in this checkout. No GLES driver, Android device, screenshot, or performance run was performed. The source changes are not visually verified on device.
+
 ## Portable coverage
 
 FxCoreTest covers parameter ranges/defaults, branch/topological ordering, missing required inputs, cycle rejection, event ID dedup/reset, invalid metadata sanitization, and bounded fixed-step planning. FxPresetJsonTest covers all built-in preset round-trips, graph validation after decode, unsupported schema versions, and unknown-field rejection. These are not GPU shader tests.

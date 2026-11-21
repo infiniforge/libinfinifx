@@ -18,7 +18,7 @@ The constructors copy lists/maps they receive and limit their sizes. audio = nul
 
 ## Effect consumption and event reuse
 
-CRT/LCD do not inspect audio. Water uses lowEnergy/onset only when audioGain is nonzero. Heat-ripple/fire scale source injection from lowEnergy and accept each new onset ID at most once per runtime. Heat onset injection also requires an event timestamp within 250 ms of presentation time. Reusing the same snapshot does not create repeated bursts. No effect interprets a continuously high onset field as a new event.
+CRT/LCD and kaleidoscope do not inspect audio. Water uses lowEnergy/onset only when audioGain is nonzero. Heat-ripple/fire scale source injection from lowEnergy and accept each new onset ID at most once per runtime. Heat onset injection also requires an event timestamp within 250 ms of presentation time. Rotozoom responds to RMS/low-band energy and optional timestamped onset events; event IDs are deduplicated per node and the response decays over time. Reusing the same snapshot does not create repeated bursts. No effect interprets a continuously high onset field as a new event.
 
 ## Example snapshot
 
@@ -36,14 +36,8 @@ CRT/LCD do not inspect audio. Water uses lowEnergy/onset only when audioGain is 
         beatPhase = .31f,
     )
 
-## Infinimedia adapter guidance
+## Infinimedia adapter
 
-Infinimedia owns PCM/playback-position analysis today, including RMS/peak, 16 spectrum bands, and onset/transient features. Do not add another decoder or analyzer here. A later app-owned adapter can:
+The current Infinimedia host adapter uses libinfinisound's existing PCM analysis and does not add a decoder or analyzer. It maps the existing 16 normalized spectrum bands directly, averages indices 0–3 for low, 4–9 for mid, and 10–15 for high energy, computes RMS as the root-mean-square of the existing normalized left/right VU RMS values, and takes peak as the maximum of the existing left/right peak holders. The adapter timestamps the snapshot with monotonic `System.nanoTime()` when the host receives the analyzer update. It currently supplies no onset events, spectral flux, BPM, or beat phase; these stay unavailable rather than being invented.
 
-1. Use the analyzer's playback-position timestamp for audio.timestampNanos, and pass the associated spectrum snapshot with the visual frame.
-2. Copy RMS/peak only after normalizing to [0,1]; if analyzer levels are dBFS with a -72 dB floor, map dBFS to linear amplitude using 10^(dBFS/20), treating the analyzer's floor/silence as zero.
-3. Map the existing 16 bands to bands directly after dBFS-to-amplitude conversion. Derive low/mid/high as documented contiguous band groups; do not invent instrument labels.
-4. Convert each actual onset/transient to a stable incrementing FxAudioEvent ID and timestamp. Do not emit it again as a new event on later frames.
-5. Leave audio null for video/image items and pass source geometry/clock separately.
-
-This is guidance only: no Infinimedia source or libinfinisound type is imported or modified.
+A host with its own stable transient/beat event stream can add monotonically increasing IDs and source timestamps as `FxAudioEvent`. Effects such as rotozoom accept each ID once; this library never subscribes to the player or estimates beats from PCM.

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "name": "album-art-rotozoom",
+  "description": "Animated album-art rotozoom with optional audio response.",
+  "graph": {
+    "name": "album-art-rotozoom",
+    "outputNodeId": "effect",
+    "nodes": [
+      {
+        "id": "effect",
+        "effectId": "distort:rotozoom",
+        "enabled": true,
+        "parameters": {
+          "zoom": {
+            "type": "float",
+            "value": 1.08
+          },
+          "zoomPulse": {
+            "type": "float",
+            "value": 0.16
+          },
+          "rotationSpeed": {
+            "type": "float",
+            "value": 0.32
+          },
+          "audioGain": {
+            "type": "float",
+            "value": 0.65
+          },
+          "edgeMode": {
+            "type": "enum",
+            "value": "mirror"
+          }
+        }
+      }
+    ],
+    "connections": [
+      {
+        "from": "source",
+        "to": "effect",
+        "input": "image"
+      }
+    ]
+  }
+}

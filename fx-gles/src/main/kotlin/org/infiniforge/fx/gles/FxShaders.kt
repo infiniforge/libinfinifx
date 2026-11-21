@@ -169,6 +169,78 @@ internal object FxShaders {
         }
     """
 
+    const val ROTOZOOM = """
+        #version 300 es
+        precision highp float;
+        in vec2 vUv;
+        uniform sampler2D uInput;
+        uniform float uTime;
+        uniform float uZoom;
+        uniform float uZoomPulse;
+        uniform float uRotationSpeed;
+        uniform float uAudioPulse;
+        uniform int uEdgeMode;
+        uniform int uAlphaMode0;
+        uniform int uColorEncoding0;
+        uniform vec4 uUvRect0;
+        uniform int uOrientation0;
+        uniform int uOutputAlphaMode;
+        uniform int uOutputColorEncoding;
+        out vec4 fragColor;
+        vec2 wrapUv(vec2 uv) {
+            if (uEdgeMode == 1) return fract(uv);
+            if (uEdgeMode == 2) return 1.0 - abs(mod(uv, 2.0) - 1.0);
+            return clamp(uv, vec2(0.001), vec2(0.999));
+        }
+        void main() {
+            float breathing = 1.0 + uZoomPulse * sin(uTime * 0.73);
+            float zoom = max(0.15, uZoom * breathing + uAudioPulse * 0.28);
+            float angle = uTime * (uRotationSpeed + uAudioPulse * 0.45) + uAudioPulse * 0.16;
+            float c = cos(angle);
+            float s = sin(angle);
+            vec2 p = (vUv - vec2(0.5)) * zoom;
+            vec2 uv = mat2(c, -s, s, c) * p + vec2(0.5);
+            vec4 sampleColor = texture(uInput, fxMapUv(wrapUv(uv), uUvRect0, uOrientation0));
+            vec4 linear = fxToLinearPremul(sampleColor, uAlphaMode0, uColorEncoding0);
+            fragColor = fxFromLinearPremul(linear, uOutputAlphaMode, uOutputColorEncoding);
+        }
+    """
+
+    const val KALEIDOSCOPE = """
+        #version 300 es
+        precision highp float;
+        in vec2 vUv;
+        uniform sampler2D uInput;
+        uniform int uSegments;
+        uniform float uRotation;
+        uniform float uZoom;
+        uniform int uEdgeMode;
+        uniform int uAlphaMode0;
+        uniform int uColorEncoding0;
+        uniform vec4 uUvRect0;
+        uniform int uOrientation0;
+        uniform int uOutputAlphaMode;
+        uniform int uOutputColorEncoding;
+        out vec4 fragColor;
+        vec2 wrapUv(vec2 uv) {
+            if (uEdgeMode == 1) return fract(uv);
+            if (uEdgeMode == 2) return 1.0 - abs(mod(uv, 2.0) - 1.0);
+            return clamp(uv, vec2(0.001), vec2(0.999));
+        }
+        void main() {
+            const float tau = 6.28318530718;
+            vec2 p = vUv - vec2(0.5);
+            float radius = length(p) * uZoom;
+            float sector = tau / float(max(3, uSegments));
+            float angle = atan(p.y, p.x) + uRotation;
+            float folded = abs(mod(angle + 0.5 * sector, sector) - 0.5 * sector);
+            vec2 uv = vec2(0.5) + radius * vec2(cos(folded), sin(folded));
+            vec4 sampleColor = texture(uInput, fxMapUv(wrapUv(uv), uUvRect0, uOrientation0));
+            vec4 linear = fxToLinearPremul(sampleColor, uAlphaMode0, uColorEncoding0);
+            fragColor = fxFromLinearPremul(linear, uOutputAlphaMode, uOutputColorEncoding);
+        }
+    """
+
     const val WATER = """
         #version 300 es
         precision highp float;

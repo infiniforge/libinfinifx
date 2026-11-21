@@ -42,6 +42,30 @@ object BuiltinFx {
             ),
         ),
         FxEffectDescriptor(
+            id = "distort:rotozoom", version = 1, title = "Album art rotozoom",
+            description = "Continuously rotates and zooms an input image; optional RMS/onset response shifts zoom and rotation.",
+            category = FxEffectCategory.TRANSFORMER, inputPorts = listOf(FxInputPort("image")),
+            metadataInterests = setOf("audio.rms", "audio.lowEnergy", "audio.onset"),
+            parameters = listOf(
+                f("zoom", 1.08f, .5f, 2.5f, description = "Base image scale around the center."),
+                f("zoomPulse", .16f, 0f, .6f, description = "Autonomous zoom breathing amount."),
+                f("rotationSpeed", .32f, -4f, 4f, "rad/s", "Continuous rotation speed."),
+                f("audioGain", .65f, 0f, 2f, description = "Optional RMS, bass and onset response; zero disables it."),
+                e("edgeMode", "mirror", listOf("clamp", "repeat", "mirror"), "Sampling behavior outside the transformed image."),
+            ),
+        ),
+        FxEffectDescriptor(
+            id = "distort:kaleidoscope", version = 1, title = "Kaleidoscope",
+            description = "Reflects an input image into configurable radial symmetry sectors.",
+            category = FxEffectCategory.TRANSFORMER, inputPorts = listOf(FxInputPort("image")),
+            parameters = listOf(
+                i("segments", 8, 3, 16, "sectors", "Number of reflected radial sectors."),
+                f("rotation", 0f, -3.141593f, 3.141593f, "radians", "Angular rotation of the symmetry pattern."),
+                f("zoom", 1f, .5f, 2f, description = "Scale of the sampled image around the pattern center."),
+                e("edgeMode", "mirror", listOf("clamp", "repeat", "mirror"), "Sampling behavior outside the transformed image."),
+            ),
+        ),
+        FxEffectDescriptor(
             id = "distort:water-refraction", version = 1, title = "Water refraction",
             description = "Animated multiscale procedural height field refracts the image beneath a water surface.",
             category = FxEffectCategory.TRANSFORMER, inputPorts = listOf(FxInputPort("image")),

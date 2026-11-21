@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "name": "kaleidoscope",
+  "description": "Eight-sector reflected image kaleidoscope.",
+  "graph": {
+    "name": "kaleidoscope",
+    "outputNodeId": "effect",
+    "nodes": [
+      {
+        "id": "effect",
+        "effectId": "distort:kaleidoscope",
+        "enabled": true,
+        "parameters": {
+          "segments": {
+            "type": "int",
+            "value": 8
+          },
+          "rotation": {
+            "type": "float",
+            "value": 0.0
+          },
+          "zoom": {
+            "type": "float",
+            "value": 1.0
+          },
+          "edgeMode": {
+            "type": "enum",
+            "value": "mirror"
+          }
+        }
+      }
+    ],
+    "connections": [
+      {
+        "from": "source",
+        "to": "effect",
+        "input": "image"
+      }
+    ]
+  }
+}

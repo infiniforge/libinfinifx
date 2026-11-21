@@ -17,6 +17,10 @@ internal class BuiltinRuntime(
         HeatSimulation(passes, surfaces)
     } else null
     private var waterTimeSeconds = 0f
+    private var rotozoomTimeSeconds = 0f
+    private val rotozoomEventCursor = FxEventCursor()
+    private var rotozoomEventTimestampNanos = -1L
+    private var rotozoomEventStrength = 0f
 
     override fun render(
         frame: FxFrameInput,
@@ -52,6 +56,42 @@ internal class BuiltinRuntime(
                     "uContrast" to p.float("contrast"),
                     "uGamma" to p.float("gamma"),
                     "uPixelGap" to p.float("pixelGap"),
+                ))
+            }
+            "distort:rotozoom" -> {
+                val p = parameters
+                rotozoomTimeSeconds = (rotozoomTimeSeconds + frame.deltaTimeSeconds.coerceIn(0f, 0.1f)) % 600f
+                frame.audio?.onsetEvents.orEmpty().forEach { event ->
+                    if (rotozoomEventCursor.accept(event.id)) {
+                        rotozoomEventTimestampNanos = event.timestampNanos
+                        rotozoomEventStrength = event.strength
+                    }
+                }
+                val eventAge = if (rotozoomEventTimestampNanos < 0L) Float.POSITIVE_INFINITY else
+                    (frame.presentationTimeNanos - rotozoomEventTimestampNanos).coerceAtLeast(0L) / 1_000_000_000f
+                val onsetPulse = if (eventAge <= 0.45f) rotozoomEventStrength * kotlin.math.exp(-eventAge * 7.5f) else 0f
+                val energy = maxOf(frame.audio?.rms ?: 0f, (frame.audio?.lowEnergy ?: 0f) * 0.85f)
+                val audioPulse = (maxOf(onsetPulse, energy * 0.55f) * p.float("audioGain")).coerceIn(0f, 1f)
+                val edge = when (p.enum("edgeMode")) { "repeat" -> 1; "mirror" -> 2; else -> 0 }
+                passes.draw(FxShaders.ROTOZOOM, output, listOf(image ?: error("Missing image input")), mapOf(
+                    "uInput" to 0,
+                    "uTime" to rotozoomTimeSeconds,
+                    "uZoom" to p.float("zoom"),
+                    "uZoomPulse" to p.float("zoomPulse"),
+                    "uRotationSpeed" to p.float("rotationSpeed"),
+                    "uAudioPulse" to audioPulse,
+                    "uEdgeMode" to edge,
+                ))
+            }
+            "distort:kaleidoscope" -> {
+                val p = parameters
+                val edge = when (p.enum("edgeMode")) { "repeat" -> 1; "mirror" -> 2; else -> 0 }
+                passes.draw(FxShaders.KALEIDOSCOPE, output, listOf(image ?: error("Missing image input")), mapOf(
+                    "uInput" to 0,
+                    "uSegments" to p.int("segments"),
+                    "uRotation" to p.float("rotation"),
+                    "uZoom" to p.float("zoom"),
+                    "uEdgeMode" to edge,
                 ))
             }
             "distort:water-refraction" -> {
@@ -100,7 +140,13 @@ internal class BuiltinRuntime(
 
     override fun reset(reason: FxDiscontinuity) {
         heat?.reset(reason)
-        if (reason != FxDiscontinuity.PAUSED) waterTimeSeconds = 0f
+        rotozoomEventCursor.reset()
+        rotozoomEventTimestampNanos = -1L
+        rotozoomEventStrength = 0f
+        if (reason != FxDiscontinuity.PAUSED) {
+            waterTimeSeconds = 0f
+            rotozoomTimeSeconds = 0f
+        }
     }
     override fun close() { heat?.close() }
 }

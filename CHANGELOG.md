@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.1 — Unreleased
+
+- Add animated `distort:rotozoom` with optional normalized RMS/low-band and onset-event response.
+- Add configurable `distort:kaleidoscope`.
+- Add `album-art-rotozoom` and `kaleidoscope` preset graphs.
+- Preserve source aspect/crop/orientation across multi-pass graph stages with one destination-sized normalization pass.
+- Normalize graph source geometry once so multi-pass chains preserve source aspect ratio.
+- Document the Infinimedia host adapter and its temporary random-stage policy.
+
+
 ## 0.1.0 — 2026-11-20
 
 - Added portable effect descriptors, frame/audio metadata, graph validation, fixed-step planning, and built-in preset models.

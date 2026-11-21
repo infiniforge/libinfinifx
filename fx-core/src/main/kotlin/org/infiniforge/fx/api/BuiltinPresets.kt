@@ -14,6 +14,8 @@ object BuiltinPresets {
         FxPreset("lcd-gameboy-dmg", "Four-shade green LCD remap over logical source pixels.", chain("lcd-gameboy-dmg", "display:lcd")),
         FxPreset("water-over-image", "Autonomous calm-to-choppy procedural water refraction.", chain("water-over-image", "distort:water-refraction")),
         FxPreset("heat-haze", "Private evolving heat field refracts the input image.", chain("heat-haze", "distort:heat-ripple")),
+        FxPreset("album-art-rotozoom", "Animated rotation and zoom with optional audio metadata response.", chain("album-art-rotozoom", "distort:rotozoom")),
+        FxPreset("kaleidoscope", "Eight-sector reflected image kaleidoscope.", chain("kaleidoscope", "distort:kaleidoscope")),
         FxPreset(
             "audio-fire-overlay", "Independent transparent fire generator composited over the input image.",
             FxGraph(
