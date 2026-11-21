@@ -52,3 +52,7 @@ InfiniMesh owns 3D parsing, model state, camera, and scene rendering. Current li
 - Close while the creating context is current. Recreate the engine after EGL context loss.
 - Handle FxRenderResult.Failure by retaining a valid host frame or bypassing FX; do not block audio or emulation threads.
 - Keep display placement and input mapping in the app.
+
+## Lightning spectrum host usage
+
+A host can add an input-free `generator:lightning-spectrum` node, connect it as the `overlay` branch of a `composite:blend`, and connect the image/filter result to `base`. Pass the host's current normalized `AudioFrameMetadata.bands` in each `FxFrameInput`; do not request audio or run analysis from the render thread. The node output spans the complete render target width. Its graph parameters may be updated from an app-owned editor; UI and saved-setting policy remain host-owned.

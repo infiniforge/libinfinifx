@@ -63,3 +63,10 @@ On a GLES 3 emulator/device, build the sample and test:
 8. Record device model, Android, GLES/GLSL versions, output size, graph, observed frame times/FPS, and thermal conditions. No performance target is claimed until measured.
 
 The configured CI workflow compiles JVM tests and Android modules on a hosted Android SDK runner. CI cannot establish GPU visual/device acceptance.
+
+## Lightning-spectrum generator addition (2026-11-20)
+
+- PASS: `./gradlew :fx-core:test --max-workers=1 --console=plain` — 8 portable JVM tests passed.
+- PASS: `ANDROID_HOME=/data/data/com.termux/files/home/android-sdk ./build.sh --no-daemon --max-workers=1 --console=plain` — 3 GLES preset-codec tests passed; the `fx-gles` AAR and sample APK assembled.
+- PASS: `python3 scripts/validate-shaders.py` — all 12 stages passed glslang syntax checks, including `LIGHTNING_SPECTRUM`.
+- `adb devices -l` reports no connected device. GLES driver compilation, actual lightning appearance, surface composition, and device performance remain unverified.

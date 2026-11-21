@@ -53,3 +53,9 @@ resize requires positive dimensions within the queried maximum and resets effect
 ## Preset JSON
 
 FxPresetJson is in fx-gles because it uses Android's org.json. encode(FxPreset): String and decode(String): FxPreset support schema version 1 only. Size is limited to 256 Ki characters, node count 64, edge count 128, vector length 1–4. Decoding checks structure and schema; run FxGraphValidator against BuiltinFx.byId before execution. See [presets](presets.md).
+
+## Lightning spectrum generator
+
+`generator:lightning-spectrum` is a no-input generator with optional `FxFrameInput.audio.bands`. It maps up to sixteen normalized bands from low to high frequency into columns spanning the entire destination width. The shader adds a colored bar body, animated jagged electric core, short forks, and a glow halo, then emits a transparent premultiplied layer. Missing or silent bands leave a small configurable idle baseline so a preview remains visible. The effect does not analyze audio or need source imagery; when composing over an image, connect its output to the `overlay` input of `composite:blend`.
+
+Descriptor parameters: `gain` (default 2.6, range 0–5), `maxHeight` (default 0.88, range 0.1–1), `barGap` (default 0.14, range 0–0.4), `glow` (default 0.9, range 0–2), and `idleHeight` (default 0.04, range 0–0.2). Animation is clock-driven and reproducible for matching timestamps, seed, metadata, and backend within normal GPU precision limits.

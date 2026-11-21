@@ -2,6 +2,9 @@
 
 ## 0.1.1 — Unreleased
 
+- Add full-width `generator:lightning-spectrum` with an original animated lightning shader, normalized 16-band input, an idle preview, and an alpha-compositable preset.
+## 0.1.1 — Unreleased
+
 - Add animated `distort:rotozoom` with optional normalized RMS/low-band and onset-event response.
 - Add configurable `distort:kaleidoscope`.
 - Add `album-art-rotozoom` and `kaleidoscope` preset graphs.

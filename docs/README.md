@@ -1,6 +1,6 @@
 # Documentation index
 
-Current maturity: source implementation includes pass-through, compositing, CRT/LCD, water/heat, fire, rotozoom, and kaleidoscope. Recorded portable JVM/Android builds and shader checks apply to the previous baseline; the current unreleased effect and geometry updates still need fresh build checks. GPU-driver shader validation, visual output, device lifecycle, and performance need device acceptance.
+Current maturity: source implementation includes pass-through, compositing, CRT/LCD, water/heat, fire, rotozoom, kaleidoscope, and the full-width audio lightning-spectrum generator. Recorded portable JVM/Android builds and shader checks apply to the previous baseline; the current unreleased effect and geometry updates still need fresh build checks. GPU-driver shader validation, visual output, device lifecycle, and performance need device acceptance.
 
 - [Architecture](architecture.md) — modules, graph execution, state ownership, and design limits.
 - [API](api.md) — implemented Kotlin classes, ownership, thread rules, examples, and errors.
@@ -8,7 +8,7 @@ Current maturity: source implementation includes pass-through, compositing, CRT/
 - [Effects](effects.md) — implemented descriptors, defaults, ranges, and limitations.
 - [Simulation](simulation.md) — heat field, procedural water surface, stepping, and reset policy.
 - [Audio metadata](audio-metadata.md) — units, events, sanitization, and host mapping.
-- [Presets](presets.md) — schema-v1 JSON and the eight example graphs.
+- [Presets](presets.md) — schema-v1 JSON and the nine example graphs.
 - [Integration](integration.md) — source dependency setup and app-specific future integration boundaries.
 - [Builds and testing](builds-and-testing.md) — exact commands, shader syntax helper, and recorded evidence.
 - [Compatibility](compatibility.md) — SDK/GLES support, budgets, schema compatibility, and unsupported targets.
@@ -17,3 +17,7 @@ Current maturity: source implementation includes pass-through, compositing, CRT/
 - [Troubleshooting](troubleshooting.md) — common rendering failures and diagnostics.
 - [Preset JSON files](../presets/) — runnable schema examples.
 - [Repository instructions](../AGENTS.md), [README](../README.md), [changelog](../CHANGELOG.md), [MIT license](../LICENSE).
+
+The `generator:lightning-spectrum` built-in adds a full-width audio-band graph
+with a procedural colored lightning treatment; see [effects](effects.md),
+[API](api.md), and [presets](presets.md).

@@ -106,6 +106,19 @@ object BuiltinFx {
             ),
         ),
         FxEffectDescriptor(
+            id = "generator:lightning-spectrum", version = 1, title = "Lightning spectrum",
+            description = "Draws a full-width, 16-band frequency graph as animated colored lightning on a transparent layer.",
+            category = FxEffectCategory.GENERATOR, inputPorts = emptyList(),
+            metadataInterests = setOf("audio.bands"),
+            parameters = listOf(
+                f("gain", 2.6f, 0f, 5f, description = "Amplification applied to normalized spectrum bands."),
+                f("maxHeight", .88f, .1f, 1f, description = "Maximum lightning column height as a fraction of the output."),
+                f("barGap", .14f, 0f, .4f, description = "Space between adjacent full-width frequency columns."),
+                f("glow", .9f, 0f, 2f, description = "Colored body, electric core, and fork brightness."),
+                f("idleHeight", .04f, 0f, .2f, description = "Small autonomous baseline when spectrum bands are absent or silent."),
+            ),
+        ),
+        FxEffectDescriptor(
             id = "composite:blend", version = 1, title = "Blend layers",
             description = "Composites base and overlay branches in explicit alpha or additive mode.",
             category = FxEffectCategory.COMPOSITOR, inputPorts = listOf(FxInputPort("base"), FxInputPort("overlay")),

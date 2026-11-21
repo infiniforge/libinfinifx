@@ -124,6 +124,39 @@ internal class BuiltinRuntime(
                 val sim = heat ?: error("Fire simulation was not prepared")
                 sim.render(frame, inputs, output, parameters, fire = true)
             }
+            "generator:lightning-spectrum" -> {
+                val bands = frame.audio?.bands.orEmpty()
+                fun bandGroup(start: Int) = FloatArray(4) { index -> bands.getOrNull(start + index) ?: 0f }
+                val hasBands = bands.isNotEmpty()
+                val time = (frame.presentationTimeNanos % 600_000_000_000L) / 1_000_000_000f
+                val seedBits = frame.randomSeed xor (frame.randomSeed ushr 32)
+                val seed = (seedBits and 0xffffL) / 65535f
+                passes.draw(LightningSpectrumShader.LIGHTNING_SPECTRUM, output, emptyList(), mapOf(
+                    "uBands0" to bandGroup(0),
+                    "uBands1" to bandGroup(4),
+                    "uBands2" to bandGroup(8),
+                    "uBands3" to bandGroup(12),
+                    "uBandCount" to minOf(16, bands.size),
+                    "uAudioPresent" to if (hasBands) 1 else 0,
+                    "uTime" to time,
+                    "uSeed" to seed,
+                    "uGain" to parameters.float("gain"),
+                    "uMaxHeight" to parameters.float("maxHeight"),
+                    "uBarGap" to parameters.float("barGap"),
+                    "uGlow" to parameters.float("glow"),
+                    "uIdleHeight" to parameters.float("idleHeight"),
+                    "uOutputAlphaMode" to when (output.alphaMode) {
+                        FxAlphaMode.OPAQUE -> 0
+                        FxAlphaMode.STRAIGHT -> 1
+                        FxAlphaMode.PREMULTIPLIED -> 2
+                    },
+                    "uOutputColorEncoding" to when (output.colorEncoding) {
+                        FxColorEncoding.LINEAR -> 0
+                        FxColorEncoding.SRGB -> 1
+                        FxColorEncoding.UNKNOWN -> 2
+                    },
+                ))
+            }
             "composite:blend" -> {
                 val p = parameters
                 val base = inputs["base"] ?: error("Missing base input")

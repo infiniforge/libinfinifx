@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "fx-gles/src/main/kotlin/org/infiniforge/fx/gles/FxShaders.kt"
-EXPECTED = {"VERTEX", "COPY", "CRT", "LCD", "ROTOZOOM", "KALEIDOSCOPE", "WATER", "HEAT_STEP", "HEAT_RIPPLE", "FIRE", "BLEND"}
+EXPECTED = {"VERTEX", "COPY", "CRT", "LCD", "ROTOZOOM", "KALEIDOSCOPE", "WATER", "HEAT_STEP", "HEAT_RIPPLE", "FIRE", "BLEND", "LIGHTNING_SPECTRUM"}
 
 
 def main() -> int:
@@ -20,7 +20,8 @@ def main() -> int:
         print("glslangValidator is required on PATH", file=sys.stderr)
         return 2
     source = SOURCE.read_text(encoding="utf-8")
-    shaders = dict(re.findall(r'const val (\w+) = """\n(.*?)\n    """', source, re.S))
+    shader_sources = [source, (ROOT / "fx-gles/src/main/kotlin/org/infiniforge/fx/gles/LightningSpectrumShader.kt").read_text(encoding="utf-8")]
+    shaders = {name: code for text in shader_sources for name, code in re.findall(r'const val (\w+) = """\n(.*?)\n    """', text, re.S)}
     missing = EXPECTED - shaders.keys()
     if missing:
         print(f"Missing expected shader string(s): {', '.join(sorted(missing))}", file=sys.stderr)

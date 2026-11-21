@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "name": "lightning-spectrum",
+  "description": "Full-width colored lightning frequency graph with optional normalized audio bands.",
+  "graph": {
+    "name": "lightning-spectrum",
+    "outputNodeId": "spectrum",
+    "nodes": [
+      {
+        "id": "spectrum",
+        "effectId": "generator:lightning-spectrum",
+        "enabled": true,
+        "parameters": {
+          "gain": { "type": "float", "value": 2.6 },
+          "maxHeight": { "type": "float", "value": 0.88 },
+          "barGap": { "type": "float", "value": 0.14 },
+          "glow": { "type": "float", "value": 0.9 },
+          "idleHeight": { "type": "float", "value": 0.04 }
+        }
+      }
+    ],
+    "connections": []
+  }
+}

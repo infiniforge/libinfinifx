@@ -44,3 +44,7 @@ Frame geometry carries source crop/orientation and destination placement. The en
 ## Deliberate omissions
 
 There is no general visual-programming editor, user GLSL, shader hot reload, shared mutable simulation, temporal CRT phosphor or LCD ghost history, arbitrary layer stacks beyond explicit graph nodes, GPU timestamp query API, export/readback pipeline, or GLES2/Vulkan/AGSL backend. An Infinimedia artwork/static-image host adapter now consumes the public API; other application integrations remain separate and require runtime acceptance.
+
+## Lightning spectrum generator
+
+The input-free `generator:lightning-spectrum` reads only the current immutable audio-band snapshot, timestamp, and graph parameters. It writes a full-target-width transparent layer with sixteen colored jagged electric columns. A host graph connects this node to an explicit blend; the effect has no dependency on album-art or audio-decoder code and allocates no per-frame textures.

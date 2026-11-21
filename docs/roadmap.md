@@ -12,3 +12,5 @@ Status date: 2026-11-20.
 | App integrations | An Infinimedia host adapter and temporary random-stage graph policy are implemented in its app checkout. | Build, transparent-surface composition, shader driver compilation, visual correctness, and real-device performance remain unverified. InfiniPlay, InfiniCanvas, and InfiniMesh remain separate future integrations. |
 
 Do not claim “device-ready,” frame rate, hardware accuracy, or shader correctness from source inspection. The smallest next integration task is a device acceptance pass for the Infinimedia artwork pipeline, followed by deliberate effect selection as a separate app change.
+
+The full-width lightning-spectrum generator is source-implemented and integrated in the current Infinimedia graph. The host parameter editor applies values to the active pipeline. Portable tests, AAR/sample compilation, and glslang syntax checks pass; GLES-driver visual appearance and real-device performance remain unverified.
