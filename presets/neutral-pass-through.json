@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "name": "neutral-pass-through",
+  "description": "Source-only exact sampled copy.",
+  "graph": {
+    "name": "neutral-pass-through",
+    "outputNodeId": "source",
+    "nodes": [],
+    "connections": []
+  }
+}

@@ -1,0 +1,17 @@
+# Built-in effects
+
+Descriptors are available from BuiltinFx.byId. Parameter ranges are inclusive. Omitted values use the descriptor default. All built-ins require GLES 3.0, use one RGBA8 image output, clamp at image edges, and return clear validation/render errors for missing inputs.
+
+| ID | Category / input | Parameters (default; range) | Behavior and status |
+| --- | --- | --- | --- |
+| core:passthrough v1 | Transformer; image | none | Shader copy. Preserves representation when source/target alpha and color modes match. Implemented; exact scaling depends on sampling mode. |
+| display:crt v1 | Display; image | scanlineStrength .28 [0,.9]; beamWidth .72 [.2,1]; maskStrength .18 [0,.8]; maskPitch 1 output px [.5,8]; mask shadow [none,shadow,aperture]; curvature .015 [0,.12]; vignette .12 [0,.8] | Source-raster scanline darkening, output-pixel mask, mild curvature/vignette. Audio ignored. No phosphor history, interlace, composite decoding, convergence, or metrological TV calibration. |
+| display:lcd v1 | Display; image | palette gameboy [source,monochrome,gameboy]; contrast 1.08 [.25,2.5]; gamma 1 [0.4,2.5]; pixelGap .06 [0,.35] | Samples logical source pixel centers, remaps to grayscale or four green shades, and retains discrete source resolution. Audio ignored. No response-time persistence or viewing-angle model. Game Boy palette is a stylized luminance remap, not recovered original index data. |
+| distort:water-refraction v1 | Transformer; image | depth .42 [0,1]; waveScale 8 [1,32]; waveSpeed .7 [0,4]; roughness .35 [0,1]; distortion .012 UV [0,.08]; caustics true; audioGain 0 [0,2] | Multi-direction, multi-scale procedural height function; gradient refracts underlying image. Calm/choppy controls and optional subtle highlights. Animates from bounded delta time without audio. Audio modulation is opt-in. It is an analytic field, not a ping-pong fluid solver. |
+| distort:heat-ripple v1 | Transformer; image required | simulationSize 128 [64,512]; cooling 1.8 s^-1 [.1,8]; turbulence .35 [0,1]; refraction .018 UV [0,.08]; audioGain .6 [0,3] | Own RGBA8 heat/velocity field evolves and its temperature gradient refracts input. Audio optional. Three passes per render when simulation advances. Implemented in source; GLES visual acceptance pending. |
+| generator:fire v1 | Generator; no input | simulationSize 128 [64,512]; intensity 1 [0,2]; cooling 1.6 s^-1 [.1,8]; audioGain .8 [0,3] | Separate private heat field rendered as a premultiplied transparent flame layer. Audio optional. Blend it with image using composite:blend. Implemented in source; GLES visual acceptance pending. |
+| composite:blend v1 | Compositor; base + overlay | mode alpha [alpha,add]; opacity 1 [0,1] | Explicit premultiplied alpha-over or additive composition in linear sRGB. Both branches write separate targets. |
+
+Each descriptor lists audio interests, history requirement, capability, predictable passes and deterministic-input flag. Water/time-based outputs are deterministic for the same delta sequence and parameters. Heat/fire additionally depend on private simulation state, seed, and the same timestamp/metadata sequence. Floating-point results may differ across GPUs.
+
+The 1970s/1980s/1990s, aperture-grille, shadow-mask, generic LCD and DMG styles can be expressed by data parameters; only crt-classic and lcd-gameboy-dmg are currently registered presets. Preset names do not claim hardware fidelity. More detailed mask layouts, CRT/LCD persistence, bloom and other filters remain planned.

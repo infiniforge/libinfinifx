@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "name": "audio-fire-overlay",
+  "description": "Independent audio-reactive fire layer alpha-composited over source.",
+  "graph": {
+    "name": "audio-fire-overlay",
+    "outputNodeId": "over",
+    "nodes": [
+      {
+        "id": "flame",
+        "effectId": "generator:fire",
+        "enabled": true,
+        "parameters": {
+          "simulationSize": { "type": "int", "value": 128 },
+          "intensity": { "type": "float", "value": 1.0 },
+          "cooling": { "type": "float", "value": 1.6 },
+          "audioGain": { "type": "float", "value": 0.8 }
+        }
+      },
+      {
+        "id": "over",
+        "effectId": "composite:blend",
+        "enabled": true,
+        "parameters": {
+          "mode": { "type": "enum", "value": "alpha" },
+          "opacity": { "type": "float", "value": 1.0 }
+        }
+      }
+    ],
+    "connections": [
+      { "from": "source", "to": "over", "input": "base" },
+      { "from": "flame", "to": "over", "input": "overlay" }
+    ]
+  }
+}

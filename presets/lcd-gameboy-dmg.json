@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "name": "lcd-gameboy-dmg",
+  "description": "Stylized four-shade green LCD remap from RGB luminance.",
+  "graph": {
+    "name": "lcd-gameboy-dmg",
+    "outputNodeId": "lcd",
+    "nodes": [
+      {
+        "id": "lcd",
+        "effectId": "display:lcd",
+        "enabled": true,
+        "parameters": {
+          "palette": { "type": "enum", "value": "gameboy" },
+          "contrast": { "type": "float", "value": 1.08 },
+          "gamma": { "type": "float", "value": 1.0 },
+          "pixelGap": { "type": "float", "value": 0.06 }
+        }
+      }
+    ],
+    "connections": [
+      { "from": "source", "to": "lcd", "input": "image" }
+    ]
+  }
+}

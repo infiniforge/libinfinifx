@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "name": "heat-haze",
+  "description": "Private heat simulation refracts the source image.",
+  "graph": {
+    "name": "heat-haze",
+    "outputNodeId": "heat",
+    "nodes": [
+      {
+        "id": "heat",
+        "effectId": "distort:heat-ripple",
+        "enabled": true,
+        "parameters": {
+          "simulationSize": { "type": "int", "value": 128 },
+          "cooling": { "type": "float", "value": 1.8 },
+          "turbulence": { "type": "float", "value": 0.35 },
+          "refraction": { "type": "float", "value": 0.018 },
+          "audioGain": { "type": "float", "value": 0.6 }
+        }
+      }
+    ],
+    "connections": [
+      { "from": "source", "to": "heat", "input": "image" }
+    ]
+  }
+}

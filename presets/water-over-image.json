@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "name": "water-over-image",
+  "description": "Autonomous procedural water refraction.",
+  "graph": {
+    "name": "water-over-image",
+    "outputNodeId": "water",
+    "nodes": [
+      {
+        "id": "water",
+        "effectId": "distort:water-refraction",
+        "enabled": true,
+        "parameters": {
+          "depth": { "type": "float", "value": 0.42 },
+          "waveScale": { "type": "float", "value": 8.0 },
+          "waveSpeed": { "type": "float", "value": 0.7 },
+          "roughness": { "type": "float", "value": 0.35 },
+          "distortion": { "type": "float", "value": 0.012 },
+          "caustics": { "type": "boolean", "value": true },
+          "audioGain": { "type": "float", "value": 0.0 }
+        }
+      }
+    ],
+    "connections": [
+      { "from": "source", "to": "water", "input": "image" }
+    ]
+  }
+}

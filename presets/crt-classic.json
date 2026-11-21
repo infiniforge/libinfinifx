@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "name": "crt-classic",
+  "description": "Stylized source-raster scanlines and shadow mask.",
+  "graph": {
+    "name": "crt-classic",
+    "outputNodeId": "crt",
+    "nodes": [
+      {
+        "id": "crt",
+        "effectId": "display:crt",
+        "enabled": true,
+        "parameters": {
+          "scanlineStrength": { "type": "float", "value": 0.28 },
+          "mask": { "type": "enum", "value": "shadow" },
+          "maskStrength": { "type": "float", "value": 0.18 },
+          "curvature": { "type": "float", "value": 0.015 }
+        }
+      }
+    ],
+    "connections": [
+      { "from": "source", "to": "crt", "input": "image" }
+    ]
+  }
+}

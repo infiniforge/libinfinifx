@@ -1,0 +1,53 @@
+# Builds and testing
+
+## Toolchain and commands
+
+Pinned build tools: Gradle 9.7.1 wrapper (SHA-256 checked), Kotlin 2.2.20, Android Gradle Plugin 8.9.2, compile SDK 36, min SDK 26. JVM bytecode target is 17. Android modules need platform 36/build tools 35.0.0. No sibling checkout or source dependency is needed.
+
+Portable headless tests:
+
+    ./gradlew :fx-core:test --max-workers=1 --console=plain
+
+Android library plus sample:
+
+    ./gradlew :fx-gles:assembleDebug :sample:assembleDebug --max-workers=1 --console=plain
+
+Combined helper:
+
+    ./build.sh --max-workers=1 --console=plain
+
+Termux command verified in this checkout (SDK at `$HOME/android-sdk`; the option is passed because the already-running Gradle daemon did not inherit the exported SDK path):
+
+    ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain
+
+For Termux with its installed aapt2, if needed, add `-Pandroid.aapt2FromMavenOverride="$(command -v aapt2)"` to the Gradle invocation.
+
+## Recorded results
+
+Environment: Termux on Android, Linux aarch64, OpenJDK 21.0.13.1, Gradle 9.7.1 wrapper, date 2026-11-20. Android SDK 36 and build tools 35.0.0 were installed under `$HOME/android-sdk`; ANDROID_HOME was initially unset.
+
+- PASS: `./gradlew :fx-core:test --max-workers=1 --console=plain` — 6 portable JVM tests passed, targeting JVM 17.
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain` — JVM tests, `:fx-gles:assembleDebug`, and `:sample:assembleDebug` completed. The AAR and debug APK were produced.
+- PASS: glslangValidator syntax check of the vertex shader plus all eight fragment shader variants (9 shader stages total). This is a source syntax check, not a GLES device-driver compile/link test.
+- Android build emitted an SDK XML version 4 compatibility warning from the installed SDK tools, an experimental Termux aapt2 override warning, and Gradle deprecation notices. The build completed successfully despite them.
+- The first Android compile exposed mismatched Java/Kotlin targets and a Kotlin cross-module smart-cast error. Both were fixed; the final combined command passed.
+- `adb devices -l` reported no connected device. No shader-driver compilation, screenshot comparison, surface/context recreation, GPU timing, memory stress, FPS, thermal, or sample runtime test was run. Visual correctness and performance are **not verified on device**.
+- A standalone GitHub Actions workflow is configured to build the library and sample on an SDK-equipped runner; its first hosted run is pending repository publication.
+
+## Portable coverage
+
+FxCoreTest covers parameter ranges/defaults, branch/topological ordering, missing required inputs, cycle rejection, event ID dedup/reset, invalid metadata sanitization, and bounded fixed-step planning. FxPresetJsonTest covers all built-in preset round-trips, graph validation after decode, unsupported schema versions, and unknown-field rejection. These are not GPU shader tests.
+
+## Android/device acceptance still required
+
+On a GLES 3 emulator/device, build the sample and test:
+1. Four distinct source quadrants and opposite-corner markers retain expected orientation and crop.
+2. Source-only pass-through at equal size preserves opaque and transparent values; test both nearest and linear upscaling.
+3. CRT and LCD look distinct at several source/output sizes and rotation values.
+4. Water visibly refracts a checker/recognizable image, remains animated with audio off, and differs between calm/rough parameters.
+5. Heat-ripple and fire evolve with audio null, stay finite after varied frame intervals, and two nodes remain independent.
+6. Alpha/add composition uses separate branch targets and produces expected transparent edges.
+7. Resize, seek, pause/resume, repeated start/stop, target budget exhaustion, and context recreation return valid frames/errors without stale output.
+8. Record device model, Android, GLES/GLSL versions, output size, graph, observed frame times/FPS, and thermal conditions. No performance target is claimed until measured.
+
+The configured CI workflow compiles JVM tests and Android modules on a hosted Android SDK runner. CI cannot establish GPU visual/device acceptance.
