@@ -27,6 +27,14 @@ class FxShaderSourceTest {
         }
     }
 
+    @Test fun lightningSpectrumEmitsNoPixelsForZeroHeightBands() {
+        val source = FxShaderSource.normalize(LightningSpectrumShader.LIGHTNING_SPECTRUM)
+        assertTrue("uAudioPresent == 1" in source)
+        assertTrue("uMaxHeight * level * 0.92" in source)
+        assertTrue("if (height <= 0.000001)" in source)
+        assertTrue("fragColor = vec4(0.0);" in source)
+    }
+
     @Test fun normalizesSharedHelpersBeforeInjection() {
         val helpers = FxShaderSource.normalize(FxShaders.COLOR_HELPERS)
         assertTrue(helpers.startsWith("vec3 fxSrgbDecode"))

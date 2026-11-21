@@ -82,3 +82,13 @@ The Infinimedia diagnostic log showed GLES rejecting every graph at shader compi
 - PASS: ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain — fx-gles unit tests (5 total, 0 failures), AAR assembly, and sample APK assembly completed. fx-core:test was up to date.
 - PASS: Infinimedia ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain completed against this local library checkout; the host app APK assembled.
 - adb devices -l reports no connected device. GLES driver compilation, actual rotozoom/crop display, and vertical placement remain not verified on device. The supplied screenshot predates this fix and its accompanying log records the shader compile error.
+
+
+## Centered spectrum and bounded rotozoom (2026-11-21)
+
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./gradlew :fx-core:test :fx-gles:test --no-daemon --max-workers=1 --console=plain` — 25 test executions (10 fx-core, 8 debug GLES, 7 release GLES), no failures or skips.
+- PASS: `python3 scripts/validate-shaders.py` — all 12 GLES shader stages pass glslang syntax validation, including the changed lightning-spectrum and rotozoom shaders.
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain` — Android library AAR and sample APK assembled successfully.
+- The centered spectrum defaults to 90% width (5% margins); the GLES shader-source test asserts that zero-height spectrum columns take the transparent output path. Rotozoom motion tests cover smoothed speed changes, continuous integrated phase, the ±4 rad/s cap, and bounded frame delta.
+- An initial Gradle invocation without `ANDROID_HOME` failed with “SDK location not found”; rerunning with the documented SDK path passed.
+- `adb devices -l` reports no connected device. GPU-driver shader compilation, visual bar geometry, runtime rotozoom smoothness, and performance are not verified on device.

@@ -17,7 +17,7 @@ internal class BuiltinRuntime(
         HeatSimulation(passes, surfaces)
     } else null
     private var waterTimeSeconds = 0f
-    private var rotozoomTimeSeconds = 0f
+    private val rotozoomMotion = RotozoomMotion()
     private val rotozoomEventCursor = FxEventCursor()
     private var rotozoomEventTimestampNanos = -1L
     private var rotozoomEventStrength = 0f
@@ -60,7 +60,6 @@ internal class BuiltinRuntime(
             }
             "distort:rotozoom" -> {
                 val p = parameters
-                rotozoomTimeSeconds = (rotozoomTimeSeconds + frame.deltaTimeSeconds.coerceIn(0f, 0.1f)) % 600f
                 frame.audio?.onsetEvents.orEmpty().forEach { event ->
                     if (rotozoomEventCursor.accept(event.id)) {
                         rotozoomEventTimestampNanos = event.timestampNanos
@@ -71,16 +70,22 @@ internal class BuiltinRuntime(
                     (frame.presentationTimeNanos - rotozoomEventTimestampNanos).coerceAtLeast(0L) / 1_000_000_000f
                 val onsetPulse = if (eventAge <= 0.45f) rotozoomEventStrength * kotlin.math.exp(-eventAge * 7.5f) else 0f
                 val energy = maxOf(frame.audio?.rms ?: 0f, (frame.audio?.lowEnergy ?: 0f) * 0.85f)
-                val audioPulse = (maxOf(onsetPulse, energy * 0.55f) * p.float("audioGain")).coerceIn(0f, 1f)
+                val motion = rotozoomMotion.advance(
+                    deltaSeconds = frame.deltaTimeSeconds,
+                    bpm = frame.audio?.bpm,
+                    energy = energy,
+                    onset = onsetPulse,
+                    baseRotationSpeed = p.float("rotationSpeed"),
+                    audioGain = p.float("audioGain"),
+                )
                 val edge = when (p.enum("edgeMode")) { "repeat" -> 1; "mirror" -> 2; else -> 0 }
-                val tempoScale = ((frame.audio?.bpm ?: 120f) / 120f).coerceIn(0.5f, 2f)
                 passes.draw(FxShaders.ROTOZOOM, output, listOf(image ?: error("Missing image input")), mapOf(
                     "uInput" to 0,
-                    "uTime" to rotozoomTimeSeconds,
+                    "uTime" to motion.timeSeconds,
                     "uZoom" to p.float("zoom"),
                     "uZoomPulse" to p.float("zoomPulse"),
-                    "uRotationSpeed" to (p.float("rotationSpeed") * tempoScale),
-                    "uAudioPulse" to audioPulse,
+                    "uRotation" to motion.rotationRadians,
+                    "uAudioPulse" to motion.audioPulse,
                     "uEdgeMode" to edge,
                 ))
             }
@@ -143,6 +148,7 @@ internal class BuiltinRuntime(
                     "uSeed" to seed,
                     "uGain" to parameters.float("gain"),
                     "uMaxHeight" to parameters.float("maxHeight"),
+                    "uWidthScale" to parameters.float("widthScale"),
                     "uBarGap" to parameters.float("barGap"),
                     "uGlow" to parameters.float("glow"),
                     "uIdleHeight" to parameters.float("idleHeight"),
@@ -177,9 +183,9 @@ internal class BuiltinRuntime(
         rotozoomEventCursor.reset()
         rotozoomEventTimestampNanos = -1L
         rotozoomEventStrength = 0f
+        rotozoomMotion.reset(preservePhase = reason == FxDiscontinuity.PAUSED)
         if (reason != FxDiscontinuity.PAUSED) {
             waterTimeSeconds = 0f
-            rotozoomTimeSeconds = 0f
         }
     }
     override fun close() { heat?.close() }

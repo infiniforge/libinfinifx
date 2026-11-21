@@ -76,9 +76,19 @@ class FxCoreTest {
         assertTrue(clock.plan(1_000_000_000).reset)
     }
 
+
+    @Test fun lightningSpectrumDefaultsToCenteredNinetyPercentWidth() {
+        val effect = BuiltinFx.byId.getValue("generator:lightning-spectrum")
+        assertEquals(2, effect.version)
+        val widthScale = effect.parameters.first { it.name == "widthScale" }
+        assertEquals(.9f, (widthScale.defaultValue as FxParameterValue.FloatValue).value)
+        assertEquals(.5f, widthScale.minimum)
+        assertEquals(1f, widthScale.maximum)
+    }
+
     @Test fun rotozoomVersionDeclaresOptionalTempoInput() {
         val rotozoom = BuiltinFx.byId.getValue("distort:rotozoom")
-        assertEquals(2, rotozoom.version)
+        assertEquals(3, rotozoom.version)
         assertTrue("audio.bpm" in rotozoom.metadataInterests)
     }
 }

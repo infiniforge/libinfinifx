@@ -18,7 +18,7 @@ The constructors copy lists/maps they receive and limit their sizes. audio = nul
 
 ## Effect consumption and event reuse
 
-CRT/LCD and kaleidoscope do not inspect audio. Water uses lowEnergy/onset only when audioGain is nonzero. Heat-ripple/fire scale source injection from lowEnergy and accept each new onset ID at most once per runtime. Heat onset injection also requires an event timestamp within 250 ms of presentation time. Rotozoom responds to RMS/low-band energy and optional timestamped onset events; event IDs are deduplicated per node and the response decays over time. Reusing the same snapshot does not create repeated bursts. No effect interprets a continuously high onset field as a new event.
+CRT/LCD and kaleidoscope do not inspect audio. Water uses lowEnergy/onset only when audioGain is nonzero. Heat-ripple/fire scale source injection from lowEnergy and accept each new onset ID at most once per runtime. Heat onset injection also requires an event timestamp within 250 ms of presentation time. Rotozoom smooths BPM-derived speed over 0.9 s and RMS/onset modulation over 0.18 s, clamps angular speed to ±4 rad/s, and integrates the rate into a continuous phase. Onset event IDs are deduplicated per node and the response decays over time. Reusing the same snapshot does not create repeated bursts. No effect interprets a continuously high onset field as a new event.
 
 ## Example snapshot
 

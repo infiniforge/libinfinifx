@@ -37,7 +37,7 @@ Surface lifecycle remains app-owned. Do not call rendering from an audio callbac
 
 For effect graphs, the executor copies the input once into a pooled RGBA8 target at destination dimensions, clearing the surrounding area and placing the source inside `FxGeometry.displayRect` after applying its crop and orientation. Sequential effects and branches therefore share a stable destination-sized canvas without stretching a non-matching source aspect ratio at intermediate passes. A source-only pass-through bypass skips this normalization and draws directly into the requested display rectangle. The source dimensions in frame metadata remain the original logical raster for CRT/LCD sampling.
 
-The lightning-spectrum generator uses a single cached GLES fragment program and no input textures or history surfaces. Its sixteen bands are supplied as four vec4 uniforms; the output is transparent premultiplied RGBA and can be composited by the normal graph blend node.
+The lightning-spectrum generator uses a single cached GLES fragment program and no input textures or history surfaces. Its sixteen bands are supplied as four vec4 uniforms; widthScale maps the columns into a centered horizontal band (default 90% of output width), leaving transparent side margins. The output is transparent premultiplied RGBA and can be composited by the normal graph blend node.
 
 
 ## Shader source normalization

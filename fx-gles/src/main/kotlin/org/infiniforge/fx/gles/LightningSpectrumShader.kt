@@ -16,6 +16,7 @@ internal object LightningSpectrumShader {
         uniform float uSeed;
         uniform float uGain;
         uniform float uMaxHeight;
+        uniform float uWidthScale;
         uniform float uBarGap;
         uniform float uGlow;
         uniform float uIdleHeight;
@@ -43,8 +44,13 @@ internal object LightningSpectrumShader {
         void main() {
             const float bandsAcross = 16.0;
             const float baseY = 0.025;
-            int slot = min(int(floor(vUv.x * bandsAcross)), 15);
-            float cellX = fract(vUv.x * bandsAcross);
+            float contentX = (vUv.x - 0.5) / clamp(uWidthScale, 0.5, 1.0) + 0.5;
+            if (contentX < 0.0 || contentX > 1.0) {
+                fragColor = vec4(0.0);
+                return;
+            }
+            int slot = min(int(floor(contentX * bandsAcross)), 15);
+            float cellX = fract(contentX * bandsAcross);
             float sourceBand = 0.0;
             if (uBandCount > 0) {
                 int sourceIndex = min(int((float(slot) + 0.5) * float(uBandCount) / bandsAcross), uBandCount - 1);
@@ -53,11 +59,13 @@ internal object LightningSpectrumShader {
             float idlePulse = 0.72 + 0.28 * sin(uTime * 2.1 + float(slot) * 1.73 + uSeed * 6.28318);
             float level = uAudioPresent == 1
                 ? clamp(pow(max(sourceBand, 0.0), 0.68) * uGain, 0.0, 1.0)
-                : uIdleHeight * idlePulse;
-            // Keep a readable autonomous floor even when the analyzer returns a present-but-silent band array.
-            level = max(level, uIdleHeight);
-            float height = uMaxHeight * (0.035 + level * 0.92);
-            float y = (vUv.y - baseY) / max(height, 0.0001);
+                : clamp(uIdleHeight * idlePulse, 0.0, 1.0);
+            float height = uMaxHeight * level * 0.92;
+            if (height <= 0.000001) {
+                fragColor = vec4(0.0);
+                return;
+            }
+            float y = (vUv.y - baseY) / height;
             float insideHeight = step(0.0, y) * step(y, 1.0);
             float edgeJitter = (hash(vec2(float(slot), floor(y * 22.0 + uTime * 8.0))) - 0.5) * 0.06;
             float halfWidth = max(0.02, 0.5 * (1.0 - uBarGap));

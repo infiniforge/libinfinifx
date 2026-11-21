@@ -4,9 +4,9 @@ A standalone Android library for composable GLES 3.0 image effects, simulation f
 
 ## Initial implementation status
 
-The repository contains a portable Kotlin API/graph validator and a GLES 3.0 Android backend. Built-ins include pass-through, CRT, LCD, album-art rotozoom, kaleidoscope, procedural water refraction, a private heat-field simulation with heat ripple and fire rendering, a full-width lightning-spectrum generator, and alpha/additive layer composition. Nine JSON examples and a runnable Android sample are included.
+The repository contains a portable Kotlin API/graph validator and a GLES 3.0 Android backend. Built-ins include pass-through, CRT, LCD, album-art rotozoom, kaleidoscope, procedural water refraction, a private heat-field simulation with heat ripple and fire rendering, a centered lightning-spectrum generator, and alpha/additive layer composition. Nine JSON examples and a runnable Android sample are included.
 
-Recorded baseline evidence from the prior 0.1.0 revision includes passing portable graph/metadata tests, local GLES AAR/sample APK assembly, and glslang shader syntax validation. The 2026-11-20 working revision passes a fresh portable test, Android AAR/sample build, and GLSL syntax check for rotozoom, kaleidoscope, and graph geometry normalization; the Infinimedia host adapter is a separate checkout and still needs its own build. Device visuals remain unverified. GPU-driver compilation, visual correctness, device lifecycle, and performance are **not verified on device**. See [roadmap](docs/roadmap.md) and [build evidence](docs/builds-and-testing.md).
+Recorded baseline evidence from the prior 0.1.0 revision includes passing portable graph/metadata tests, local GLES AAR/sample APK assembly, and glslang shader syntax validation. The 2026-11-21 working revision passes portable tests, Android AAR/sample assembly, and GLSL syntax validation for centered spectrum sizing, zero-height bands, and tempo-smoothed rotozoom; the Infinimedia host adapter is a separate checkout and still needs its own build. Device visuals remain unverified. GPU-driver compilation, visual correctness, device lifecycle, and performance are **not verified on device**. See [roadmap](docs/roadmap.md) and [build evidence](docs/builds-and-testing.md).
 
 ## Standalone build
 
@@ -94,9 +94,10 @@ Start at [docs/README.md](docs/README.md). It links architecture, API, rendering
 ## Lightning-spectrum generator
 
 `generator:lightning-spectrum` is an original GLES generator that draws 16
-colored, jagged lightning bars across its full output width. It reads optional
-normalized `AudioFrameMetadata.bands`, emits a small autonomous preview when
-bands are missing, and produces a transparent premultiplied layer. Hosts can
-adjust gain, height, spacing, glow, and idle baseline through graph parameters.
+colored, jagged lightning bars across 90% of its output width by default. It
+reads optional normalized `AudioFrameMetadata.bands`, makes present zero-valued
+bands exactly zero height, and emits an optional idle preview only when bands
+are missing. Hosts can adjust width, gain, height, spacing, glow, and idle
+baseline through graph parameters.
 Use the `lightning-spectrum` preset directly or alpha-blend its output over an
 image. Shader-driver and device visual acceptance still need a GLES device.

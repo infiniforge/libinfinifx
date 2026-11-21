@@ -2,15 +2,12 @@
 
 ## 0.1.1 — Unreleased
 
-- Add full-width `generator:lightning-spectrum` with an original animated lightning shader, normalized 16-band input, an idle preview, and an alpha-compositable preset.
-## 0.1.1 — Unreleased
-
 - Normalize built-in GLES shader strings before compilation so the #version directive is on the first line.
 - Add animated `distort:rotozoom` with optional normalized RMS/low-band and onset-event response.
-- Add configurable `distort:kaleidoscope`.
-- Add `album-art-rotozoom` and `kaleidoscope` preset graphs.
+- Update `distort:rotozoom` to descriptor v3 with tempo-smoothed, bounded rotation and smooth RMS/onset modulation to prevent angle jumps.
+- Add configurable `distort:kaleidoscope` and the `album-art-rotozoom` and `kaleidoscope` preset graphs.
 - Preserve source aspect/crop/orientation across multi-pass graph stages with one destination-sized normalization pass.
-- Normalize graph source geometry once so multi-pass chains preserve source aspect ratio.
+- Center `generator:lightning-spectrum` at 90% width by default and make present zero-valued bands produce zero-height bars.
 - Document the Infinimedia host adapter and its temporary random-stage policy.
 
 

@@ -177,7 +177,7 @@ internal object FxShaders {
         uniform float uTime;
         uniform float uZoom;
         uniform float uZoomPulse;
-        uniform float uRotationSpeed;
+        uniform float uRotation;
         uniform float uAudioPulse;
         uniform int uEdgeMode;
         uniform int uAlphaMode0;
@@ -195,7 +195,7 @@ internal object FxShaders {
         void main() {
             float breathing = 1.0 + uZoomPulse * sin(uTime * 0.73);
             float zoom = max(0.15, uZoom * breathing + uAudioPulse * 0.28);
-            float angle = uTime * (uRotationSpeed + uAudioPulse * 0.45) + uAudioPulse * 0.16;
+            float angle = uRotation + uAudioPulse * 0.16;
             float c = cos(angle);
             float s = sin(angle);
             vec2 p = (vUv - vec2(0.5)) * zoom;
