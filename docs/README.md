@@ -10,7 +10,7 @@ Current maturity: first source implementation with passing portable JVM and Andr
 - [Audio metadata](audio-metadata.md) — units, events, sanitization, and host mapping.
 - [Presets](presets.md) — schema-v1 JSON and the six example graphs.
 - [Integration](integration.md) — source dependency setup and app-specific future integration boundaries.
-- [Builds and testing](builds-and-testing.md) — exact commands and recorded evidence.
+- [Builds and testing](builds-and-testing.md) — exact commands, shader syntax helper, and recorded evidence.
 - [Compatibility](compatibility.md) — SDK/GLES support, budgets, schema compatibility, and unsupported targets.
 - [Roadmap](roadmap.md) — P0/P1/P2 implementation and acceptance status.
 - [Third-party provenance](third-party.md) — licenses and shader/asset origin.

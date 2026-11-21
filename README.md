@@ -16,6 +16,10 @@ Run the portable test suite without Android SDK:
 
     ./gradlew :fx-core:test --max-workers=1 --console=plain
 
+Optionally validate the built-in GLSL source with `glslangValidator` installed on PATH:
+
+    python3 scripts/validate-shaders.py
+
 Build the Android AAR and sample APK with SDK 36 configured through ANDROID_HOME or an untracked local.properties:
 
     ./build.sh --max-workers=1 --console=plain

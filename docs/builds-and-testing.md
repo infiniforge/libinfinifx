@@ -8,6 +8,10 @@ Portable headless tests:
 
     ./gradlew :fx-core:test --max-workers=1 --console=plain
 
+Optional GLSL source syntax check (requires `glslangValidator` on PATH):
+
+    python3 scripts/validate-shaders.py
+
 Android library plus sample:
 
     ./gradlew :fx-gles:assembleDebug :sample:assembleDebug --max-workers=1 --console=plain
@@ -28,7 +32,7 @@ Environment: Termux on Android, Linux aarch64, OpenJDK 21.0.13.1, Gradle 9.7.1 w
 
 - PASS: `./gradlew :fx-core:test --max-workers=1 --console=plain` — 6 portable JVM tests passed, targeting JVM 17.
 - PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain` — JVM tests, `:fx-gles:assembleDebug`, and `:sample:assembleDebug` completed. The AAR and debug APK were produced.
-- PASS: glslangValidator syntax check of the vertex shader plus all eight fragment shader variants (9 shader stages total). This is a source syntax check, not a GLES device-driver compile/link test.
+- PASS: `python3 scripts/validate-shaders.py` with glslangValidator on PATH; the vertex shader plus all eight fragment shader variants passed (9 shader stages). This is a source syntax check, not a GLES device-driver compile/link test.
 - Android build emitted an SDK XML version 4 compatibility warning from the installed SDK tools, an experimental Termux aapt2 override warning, and Gradle deprecation notices. The build completed successfully despite them.
 - The first Android compile exposed mismatched Java/Kotlin targets and a Kotlin cross-module smart-cast error. Both were fixed; the final combined command passed.
 - `adb devices -l` reported no connected device. No shader-driver compilation, screenshot comparison, surface/context recreation, GPU timing, memory stress, FPS, thermal, or sample runtime test was run. Visual correctness and performance are **not verified on device**.
