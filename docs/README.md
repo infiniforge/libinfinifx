@@ -1,6 +1,6 @@
 # Documentation index
 
-Current maturity: source implementation includes pass-through, compositing, CRT/LCD, water/heat, fire, rotozoom, kaleidoscope, and the full-output audio lightning-spectrum generator with optional palette channels. The current source includes full-output outlined lightning without filled bar boxes, optional host-supplied palette channels, exact zero-height band behavior, and tempo-smoothed, bounded rotozoom motion. Portable tests, GLSL syntax validation, and Android AAR/sample builds pass for these updates; GPU-driver shader validation, visual output, device lifecycle, and performance still need device acceptance.
+Current maturity: source implementation includes pass-through, compositing, CRT/LCD, water/heat, fire, rotozoom, kaleidoscope, and the full-output audio lightning-spectrum generator with optional palette channels. The current source includes full-output outlined lightning without filled bar boxes, optional host-supplied palette channels, 20× animation and 8× overlapping strokes by default, exact zero-height band behavior, and tempo-smoothed, bounded rotozoom motion. Portable tests, GLSL syntax validation, and Android AAR/sample builds pass for these updates; GPU-driver shader validation, visual output, device lifecycle, and performance still need device acceptance.
 
 - [Architecture](architecture.md) — modules, graph execution, state ownership, and design limits.
 - [API](api.md) — implemented Kotlin classes, ownership, thread rules, examples, and errors.

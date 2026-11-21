@@ -101,3 +101,12 @@ The Infinimedia diagnostic log showed GLES rejecting every graph at shader compi
 - PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain` — GLES AAR and sample APK assembled.
 - The library accepts up to eight sRGB artwork palette colors through `FxMetadataChannels`; extraction remains host-owned. Its Infinimedia adapter and host-side palette tests/build are separate and must be verified in the consumer checkout.
 - `adb devices -l` reports no attached device. Visual output, palette contrast on real artwork, GLES driver compilation, and runtime performance remain **not verified on device**.
+
+
+### Faster overlapping lightning — 2026-11-21
+
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./gradlew :fx-core:test :fx-gles:test --no-daemon --max-workers=1 --console=plain` — 26 test executions (10 core; 8 debug GLES; 8 release GLES), no failures or skips. Tests cover the new 20× animation-speed and 8× bolt-width defaults plus shader parameter use.
+- PASS: `python3 scripts/validate-shaders.py` — all 12 shader stages pass glslang source validation.
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain` — GLES AAR and sample APK assembled.
+- The `generator:lightning-spectrum` descriptor is v4. Its `animationSpeed` default is 20× and `boltWidth` is 8×; both have bounded runtime controls. Audio-band heights are unchanged by animation speed.
+- `adb devices -l` reports no attached device. Actual animation speed, stroke overlap appearance, GLES driver compilation, and device performance remain **not verified on device**.

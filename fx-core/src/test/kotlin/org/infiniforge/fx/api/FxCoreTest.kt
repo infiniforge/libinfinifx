@@ -79,13 +79,15 @@ class FxCoreTest {
 
     @Test fun lightningSpectrumDefaultsToFullOutputWidthAndHeight() {
         val effect = BuiltinFx.byId.getValue("generator:lightning-spectrum")
-        assertEquals(3, effect.version)
+        assertEquals(4, effect.version)
         val widthScale = effect.parameters.first { it.name == "widthScale" }
         assertEquals(1f, (widthScale.defaultValue as FxParameterValue.FloatValue).value)
         assertEquals(.5f, widthScale.minimum)
         assertEquals(1f, widthScale.maximum)
         assertEquals(1f, (effect.parameters.first { it.name == "maxHeight" }.defaultValue as FxParameterValue.FloatValue).value)
         assertEquals(1f, (effect.parameters.first { it.name == "gain" }.defaultValue as FxParameterValue.FloatValue).value)
+        assertEquals(20f, (effect.parameters.first { it.name == "animationSpeed" }.defaultValue as FxParameterValue.FloatValue).value)
+        assertEquals(8f, (effect.parameters.first { it.name == "boltWidth" }.defaultValue as FxParameterValue.FloatValue).value)
     }
 
     @Test fun rotozoomVersionDeclaresOptionalTempoInput() {

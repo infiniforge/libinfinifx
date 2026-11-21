@@ -101,7 +101,8 @@ and emits an optional idle preview only when bands are missing. Hosts may send
 up to eight sRGB colors through `FxFrameInput.channels` using
 `fx.palette.count` and `fx.palette.color.<index>.{r,g,b}` channels. Bands select
 these colors in order and wrap. Missing palette channels use a cyan fallback.
-Hosts can adjust width, linear gain, height, spacing, glow, and idle baseline
-through graph parameters.
+Hosts can adjust width, linear gain, height, bolt width, animation speed, glow,
+and idle baseline through graph parameters. The default animation evolves at
+20× real time and the default 8× stroke width allows adjacent lightning to overlap.
 Use the `lightning-spectrum` preset directly or alpha-blend its output over an
 image. Shader-driver and device visual acceptance still need a GLES device.

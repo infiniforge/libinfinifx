@@ -17,9 +17,10 @@ internal object LightningSpectrumShader {
         uniform float uGain;
         uniform float uMaxHeight;
         uniform float uWidthScale;
-        uniform float uBarGap;
         uniform float uGlow;
         uniform float uIdleHeight;
+        uniform float uAnimationSpeed;
+        uniform float uBoltWidth;
         uniform vec3 uPalette0;
         uniform vec3 uPalette1;
         uniform vec3 uPalette2;
@@ -59,6 +60,8 @@ internal object LightningSpectrumShader {
 
         void main() {
             const float bandsAcross = 16.0;
+            float animationTime = uTime * clamp(uAnimationSpeed, 0.0, 40.0);
+            float boltWidth = clamp(uBoltWidth, 1.0, 12.0);
             float contentX = (vUv.x - 0.5) / clamp(uWidthScale, 0.5, 1.0) + 0.5;
             if (contentX < 0.0 || contentX > 1.0) {
                 fragColor = vec4(0.0);
@@ -71,7 +74,7 @@ internal object LightningSpectrumShader {
                 int sourceIndex = min(int((float(slot) + 0.5) * float(uBandCount) / bandsAcross), uBandCount - 1);
                 sourceBand = sampleBand(sourceIndex);
             }
-            float idlePulse = 0.72 + 0.28 * sin(uTime * 2.1 + float(slot) * 1.73 + uSeed * 6.28318);
+            float idlePulse = 0.72 + 0.28 * sin(animationTime * 2.1 + float(slot) * 1.73 + uSeed * 6.28318);
             float level = uAudioPresent == 1
                 ? clamp(max(sourceBand, 0.0) * uGain, 0.0, 1.0)
                 : clamp(uIdleHeight * idlePulse, 0.0, 1.0);
@@ -82,22 +85,17 @@ internal object LightningSpectrumShader {
             }
             float y = vUv.y / height;
             float insideHeight = step(0.0, y) * step(y, 1.0);
-            float edgeJitter = (hash(vec2(float(slot), floor(y * 22.0 + uTime * 8.0))) - 0.5) * 0.06;
-            float halfWidth = max(0.02, 0.5 * (1.0 - uBarGap));
-            float jaggedHalfWidth = max(0.015, halfWidth + edgeJitter);
-            float insideColumn = step(abs(cellX - 0.5), jaggedHalfWidth) * insideHeight;
-
-            float segment = y * 17.0 + uTime * 5.0;
+            float segment = y * 17.0 + animationTime * 5.0;
             float segmentIndex = floor(segment);
             float segmentPhase = smoothstep(0.12, 0.88, fract(segment));
             float noiseA = hash(vec2(float(slot) + 7.0, segmentIndex));
             float noiseB = hash(vec2(float(slot) + 7.0, segmentIndex + 1.0));
             float zigzag = mix(noiseA, noiseB, segmentPhase) - 0.5;
-            float spine = 0.5 + 0.14 * sin(y * 15.0 + uTime * 2.7 + float(slot) * 1.91) + zigzag * 0.48;
+            float spine = 0.5 + 0.14 * sin(y * 15.0 + animationTime * 2.7 + float(slot) * 1.91) + zigzag * 0.48;
             float coreDistance = abs(cellX - spine);
-            float core = (1.0 - smoothstep(0.012, 0.030, coreDistance)) * insideColumn;
-            float outline = (1.0 - smoothstep(0.032, 0.068, coreDistance)) * insideColumn;
-            float halo = exp(-coreDistance * 46.0) * insideColumn;
+            float core = (1.0 - smoothstep(0.012 * boltWidth, 0.030 * boltWidth, coreDistance)) * insideHeight;
+            float outline = (1.0 - smoothstep(0.032 * boltWidth, 0.068 * boltWidth, coreDistance)) * insideHeight;
+            float halo = exp(-coreDistance * (46.0 / boltWidth)) * insideHeight;
 
             float forkStartA = 0.24 + 0.24 * hash(vec2(float(slot), 3.0));
             float forkStartB = 0.63 + 0.18 * hash(vec2(float(slot), 9.0));
@@ -107,13 +105,13 @@ internal object LightningSpectrumShader {
             float forkXB = spine + forkYB * (hash(vec2(float(slot), 8.0)) < 0.5 ? -1.2 : 1.2);
             float forkDistanceA = abs(cellX - forkXA);
             float forkDistanceB = abs(cellX - forkXB);
-            float forkRangeA = step(0.0, forkYA) * step(forkYA, 0.20) * insideColumn;
-            float forkRangeB = step(0.0, forkYB) * step(forkYB, 0.15) * insideColumn;
-            float forkA = (1.0 - smoothstep(0.010, 0.024, forkDistanceA)) * forkRangeA;
-            float forkB = (1.0 - smoothstep(0.009, 0.022, forkDistanceB)) * forkRangeB;
-            float forkOutlineA = (1.0 - smoothstep(0.028, 0.060, forkDistanceA)) * forkRangeA;
-            float forkOutlineB = (1.0 - smoothstep(0.026, 0.056, forkDistanceB)) * forkRangeB;
-            float flicker = 0.68 + 0.32 * sin(uTime * 31.0 + float(slot) * 5.7 + noiseA * 9.0);
+            float forkRangeA = step(0.0, forkYA) * step(forkYA, 0.20) * insideHeight;
+            float forkRangeB = step(0.0, forkYB) * step(forkYB, 0.15) * insideHeight;
+            float forkA = (1.0 - smoothstep(0.010 * boltWidth, 0.024 * boltWidth, forkDistanceA)) * forkRangeA;
+            float forkB = (1.0 - smoothstep(0.009 * boltWidth, 0.022 * boltWidth, forkDistanceB)) * forkRangeB;
+            float forkOutlineA = (1.0 - smoothstep(0.028 * boltWidth, 0.060 * boltWidth, forkDistanceA)) * forkRangeA;
+            float forkOutlineB = (1.0 - smoothstep(0.026 * boltWidth, 0.056 * boltWidth, forkDistanceB)) * forkRangeB;
+            float flicker = 0.68 + 0.32 * sin(animationTime * 31.0 + float(slot) * 5.7 + noiseA * 9.0);
             float activity = max(level, 0.08) * flicker;
 
             float outlineShape = max(outline, max(forkOutlineA, forkOutlineB));

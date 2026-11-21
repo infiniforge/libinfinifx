@@ -8,6 +8,7 @@
 - Add configurable `distort:kaleidoscope` and the `album-art-rotozoom` and `kaleidoscope` preset graphs.
 - Preserve source aspect/crop/orientation across multi-pass graph stages with one destination-sized normalization pass.
 - Render `generator:lightning-spectrum` edge to edge with outline-only lightning, linear normalized band gain, and optional eight-color palette metadata channels. Present zero-valued bands still produce zero-height output.
+- Increase default lightning evolution to 20× and default stroke width to 8× so neighboring bolts overlap; expose both as bounded graph parameters.
 - Document the Infinimedia host adapter and its temporary random-stage policy.
 
 
