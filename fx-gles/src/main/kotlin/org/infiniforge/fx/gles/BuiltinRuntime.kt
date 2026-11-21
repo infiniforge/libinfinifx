@@ -152,6 +152,15 @@ internal class BuiltinRuntime(
                     "uBarGap" to parameters.float("barGap"),
                     "uGlow" to parameters.float("glow"),
                     "uIdleHeight" to parameters.float("idleHeight"),
+                    "uPaletteCount" to (frame.channels.values["fx.palette.count"]?.toInt()?.coerceIn(1, 8) ?: 1),
+                    "uPalette0" to framePalette(frame.channels.values, 0),
+                    "uPalette1" to framePalette(frame.channels.values, 1),
+                    "uPalette2" to framePalette(frame.channels.values, 2),
+                    "uPalette3" to framePalette(frame.channels.values, 3),
+                    "uPalette4" to framePalette(frame.channels.values, 4),
+                    "uPalette5" to framePalette(frame.channels.values, 5),
+                    "uPalette6" to framePalette(frame.channels.values, 6),
+                    "uPalette7" to framePalette(frame.channels.values, 7),
                     "uOutputAlphaMode" to when (output.alphaMode) {
                         FxAlphaMode.OPAQUE -> 0
                         FxAlphaMode.STRAIGHT -> 1
@@ -176,6 +185,15 @@ internal class BuiltinRuntime(
             }
             else -> error("No GLES runtime is registered for '$effectId'")
         }
+    }
+
+    private fun framePalette(channels: Map<String, Float>, index: Int): FloatArray {
+        val prefix = "fx.palette.color.$index."
+        return floatArrayOf(
+            channels[prefix + "r"] ?: 0.18f,
+            channels[prefix + "g"] ?: 0.72f,
+            channels[prefix + "b"] ?: 1f,
+        )
     }
 
     override fun reset(reason: FxDiscontinuity) {

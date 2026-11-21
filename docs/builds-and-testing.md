@@ -89,6 +89,15 @@ The Infinimedia diagnostic log showed GLES rejecting every graph at shader compi
 - PASS: `ANDROID_HOME="$HOME/android-sdk" ./gradlew :fx-core:test :fx-gles:test --no-daemon --max-workers=1 --console=plain` — 25 test executions (10 fx-core, 8 debug GLES, 7 release GLES), no failures or skips.
 - PASS: `python3 scripts/validate-shaders.py` — all 12 GLES shader stages pass glslang syntax validation, including the changed lightning-spectrum and rotozoom shaders.
 - PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain` — Android library AAR and sample APK assembled successfully.
-- The centered spectrum defaults to 90% width (5% margins); the GLES shader-source test asserts that zero-height spectrum columns take the transparent output path. Rotozoom motion tests cover smoothed speed changes, continuous integrated phase, the ±4 rad/s cap, and bounded frame delta.
+- At the earlier checkpoint, the centered spectrum defaulted to 90% width (5% margins); this was superseded by the full-output outline-only behavior recorded below. The GLES shader-source test asserted that zero-height spectrum columns take the transparent output path. Rotozoom motion tests cover smoothed speed changes, continuous integrated phase, the ±4 rad/s cap, and bounded frame delta.
 - An initial Gradle invocation without `ANDROID_HOME` failed with “SDK location not found”; rerunning with the documented SDK path passed.
 - `adb devices -l` reports no connected device. GPU-driver shader compilation, visual bar geometry, runtime rotozoom smoothness, and performance are not verified on device.
+
+
+### Full-output palette lightning follow-up — 2026-11-21
+
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./gradlew :fx-core:test :fx-gles:test --no-daemon --max-workers=1 --console=plain` — 26 test executions (10 core; 8 debug GLES; 8 release GLES), no failures or skips. Covers full-output defaults, zero-band transparency, outline-only shader source, palette selection wiring, and existing graph/motion tests.
+- PASS: `python3 scripts/validate-shaders.py` — all 12 shader stages pass glslang source validation, including the palette-colored lightning shader. This is syntax checking, not a device-driver compile/link check.
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain` — GLES AAR and sample APK assembled.
+- The library accepts up to eight sRGB artwork palette colors through `FxMetadataChannels`; extraction remains host-owned. Its Infinimedia adapter and host-side palette tests/build are separate and must be verified in the consumer checkout.
+- `adb devices -l` reports no attached device. Visual output, palette contrast on real artwork, GLES driver compilation, and runtime performance remain **not verified on device**.

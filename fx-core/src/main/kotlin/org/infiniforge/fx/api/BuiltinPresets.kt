@@ -17,7 +17,7 @@ object BuiltinPresets {
         FxPreset("album-art-rotozoom", "Animated rotation and zoom with optional audio metadata response.", chain("album-art-rotozoom", "distort:rotozoom")),
         FxPreset("kaleidoscope", "Eight-sector reflected image kaleidoscope.", chain("kaleidoscope", "distort:kaleidoscope")),
         FxPreset(
-            "lightning-spectrum", "Full-width colored lightning frequency bars driven by optional normalized audio bands.",
+            "lightning-spectrum", "Full-output outlined lightning frequency traces driven by optional normalized audio bands and palette channels.",
             FxGraph("lightning-spectrum", listOf(FxNode("spectrum", "generator:lightning-spectrum")), emptyList(), "spectrum"),
         ),
         FxPreset(

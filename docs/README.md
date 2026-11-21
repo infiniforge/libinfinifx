@@ -1,6 +1,6 @@
 # Documentation index
 
-Current maturity: source implementation includes pass-through, compositing, CRT/LCD, water/heat, fire, rotozoom, kaleidoscope, and the centered audio lightning-spectrum generator. The current source includes a centered 90%-width graph with exact zero-height band behavior, plus tempo-smoothed, bounded rotozoom motion. Portable tests, GLSL syntax validation, and Android AAR/sample builds pass for these updates; GPU-driver shader validation, visual output, device lifecycle, and performance still need device acceptance.
+Current maturity: source implementation includes pass-through, compositing, CRT/LCD, water/heat, fire, rotozoom, kaleidoscope, and the full-output audio lightning-spectrum generator with optional palette channels. The current source includes full-output outlined lightning without filled bar boxes, optional host-supplied palette channels, exact zero-height band behavior, and tempo-smoothed, bounded rotozoom motion. Portable tests, GLSL syntax validation, and Android AAR/sample builds pass for these updates; GPU-driver shader validation, visual output, device lifecycle, and performance still need device acceptance.
 
 - [Architecture](architecture.md) — modules, graph execution, state ownership, and design limits.
 - [API](api.md) — implemented Kotlin classes, ownership, thread rules, examples, and errors.
@@ -18,6 +18,6 @@ Current maturity: source implementation includes pass-through, compositing, CRT/
 - [Preset JSON files](../presets/) — runnable schema examples.
 - [Repository instructions](../AGENTS.md), [README](../README.md), [changelog](../CHANGELOG.md), [MIT license](../LICENSE).
 
-The `generator:lightning-spectrum` built-in adds a centered audio-band graph with configurable width
+The `generator:lightning-spectrum` built-in adds full-output outlined lightning with configurable width
 with a procedural colored lightning treatment; see [effects](effects.md),
 [API](api.md), and [presets](presets.md).

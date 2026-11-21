@@ -53,3 +53,8 @@ A host with an authored or externally analyzed stable beat/transient stream can
 also provide its own monotonically increasing IDs and monotonic timestamps as
 FxAudioEvent. Effects such as rotozoom accept each ID once; this library never
 subscribes to a player or performs audio I/O.
+
+
+### Optional artwork palette channels
+
+Hosts may supply an ordered palette to `generator:lightning-spectrum` through the existing bounded `FxMetadataChannels` map: `fx.palette.count` (1–8) and `fx.palette.color.<index>.r/g/b` (sRGB components normalized to 0–1). Palette extraction is host-owned and is computed when the source image changes, never on the audio or GL render thread. The library uses the supplied entries in order for lightning outlines and falls back to cyan if the channel group is absent. Other effects ignore these channels unless their descriptors explicitly declare an interest.

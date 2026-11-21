@@ -25,7 +25,7 @@ Connections use from, to, and input; source is the reserved input node ID. Every
 - heat-haze — source → distort:heat-ripple → output.
 - album-art-rotozoom — source → distort:rotozoom → output; optional energy/onset-driven zoom and rotation.
 - kaleidoscope — source → distort:kaleidoscope → output.
-- lightning-spectrum — optional `AudioFrameMetadata.bands` → centered `generator:lightning-spectrum` (90% width by default) → transparent output layer.
+- lightning-spectrum — optional `AudioFrameMetadata.bands` and optional `fx.palette.*` color channels → full-output `generator:lightning-spectrum` with outlined lightning and no box fill → transparent output layer.
 - audio-fire-overlay — source + generator:fire → composite:blend → output.
 
 Examples are checked in under ../presets/. For example, [water-over-image.json](../presets/water-over-image.json) has no hardware-specific fields.

@@ -7,7 +7,7 @@
 - Update `distort:rotozoom` to descriptor v3 with tempo-smoothed, bounded rotation and smooth RMS/onset modulation to prevent angle jumps.
 - Add configurable `distort:kaleidoscope` and the `album-art-rotozoom` and `kaleidoscope` preset graphs.
 - Preserve source aspect/crop/orientation across multi-pass graph stages with one destination-sized normalization pass.
-- Center `generator:lightning-spectrum` at 90% width by default and make present zero-valued bands produce zero-height bars.
+- Render `generator:lightning-spectrum` edge to edge with outline-only lightning, linear normalized band gain, and optional eight-color palette metadata channels. Present zero-valued bands still produce zero-height output.
 - Document the Infinimedia host adapter and its temporary random-stage policy.
 
 

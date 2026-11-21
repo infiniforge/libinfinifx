@@ -30,7 +30,12 @@ class FxShaderSourceTest {
     @Test fun lightningSpectrumEmitsNoPixelsForZeroHeightBands() {
         val source = FxShaderSource.normalize(LightningSpectrumShader.LIGHTNING_SPECTRUM)
         assertTrue("uAudioPresent == 1" in source)
-        assertTrue("uMaxHeight * level * 0.92" in source)
+        assertTrue("uMaxHeight * level" in source)
+        assertTrue("vUv.y / height" in source)
+        assertTrue("float body =" !in source)
+        assertTrue("fxSrgbDecode(samplePalette(paletteIndex))" in source)
+        assertTrue("slot % max(uPaletteCount, 1)" in source)
+        assertTrue("uMaxHeight * level * 0.92" !in source)
         assertTrue("if (height <= 0.000001)" in source)
         assertTrue("fragColor = vec4(0.0);" in source)
     }

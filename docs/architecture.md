@@ -47,4 +47,4 @@ There is no general visual-programming editor, user GLSL, shader hot reload, sha
 
 ## Lightning spectrum generator
 
-The input-free `generator:lightning-spectrum` reads only the current immutable audio-band snapshot, timestamp, and graph parameters. It writes a centered 90%-width transparent layer by default with sixteen colored jagged electric columns. A host graph connects this node to an explicit blend; the effect has no dependency on album-art or audio-decoder code and allocates no per-frame textures.
+The input-free `generator:lightning-spectrum` reads the immutable audio-band snapshot, timestamp, optional palette metadata channels, and graph parameters. It writes a full-output transparent layer by default containing sixteen jagged lightning outlines and no filled bar bodies. Each frequency slot selects a color from up to eight supplied sRGB colors (`fx.palette.count`, `fx.palette.color.<index>.r/g/b`); without palette metadata it uses a cyan fallback. A host graph connects this node to an explicit blend; the effect has no dependency on album-art or audio-decoder code and allocates no per-frame textures.
