@@ -36,7 +36,7 @@ Environment: Termux on Android, Linux aarch64, OpenJDK 21.0.13.1, Gradle 9.7.1 w
 - Android build emitted an SDK XML version 4 compatibility warning from the installed SDK tools, an experimental Termux aapt2 override warning, and Gradle deprecation notices. The build completed successfully despite them.
 - The first Android compile exposed mismatched Java/Kotlin targets and a Kotlin cross-module smart-cast error. Both were fixed; the final combined command passed.
 - `adb devices -l` reported no connected device. No shader-driver compilation, screenshot comparison, surface/context recreation, GPU timing, memory stress, FPS, thermal, or sample runtime test was run. Visual correctness and performance are **not verified on device**.
-- A standalone GitHub Actions workflow is configured to build the library and sample on an SDK-equipped runner; its first hosted run is pending repository publication.
+- PASS: GitHub Actions run [44845197052](https://github.com/infiniforge/libinfinifx/actions/runs/44845197052) for commit `c092d64` completed successfully on an SDK-equipped hosted runner. It ran the combined test/AAR/APK build; it does not perform GPU visual acceptance. The runner added non-failing maintenance annotations for pinned Actions v4/Node runtime versions.
 
 ## Portable coverage
 
