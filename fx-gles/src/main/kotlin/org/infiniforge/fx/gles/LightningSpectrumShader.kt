@@ -54,7 +54,8 @@ internal object LightningSpectrumShader {
             float level = uAudioPresent == 1
                 ? clamp(pow(max(sourceBand, 0.0), 0.68) * uGain, 0.0, 1.0)
                 : uIdleHeight * idlePulse;
-            level = max(level, uIdleHeight * 0.18);
+            // Keep a readable autonomous floor even when the analyzer returns a present-but-silent band array.
+            level = max(level, uIdleHeight);
             float height = uMaxHeight * (0.035 + level * 0.92);
             float y = (vUv.y - baseY) / max(height, 0.0001);
             float insideHeight = step(0.0, y) * step(y, 1.0);
@@ -88,10 +89,10 @@ internal object LightningSpectrumShader {
             float hue = fract(float(slot) / bandsAcross + 0.03 * sin(uTime * 0.18));
             vec3 color = bandColor(hue);
             float electric = clamp((core + 0.62 * (forkA + forkB)) * activity * uGlow, 0.0, 1.0);
-            float alpha = clamp(body * (0.10 + 0.18 * level) * uGlow + electric + halo * activity * uGlow * 0.13, 0.0, 1.0);
+            float alpha = clamp(body * (0.28 + 0.42 * level) * uGlow + electric + halo * activity * uGlow * 0.13, 0.0, 1.0);
             vec3 electricColor = mix(color, vec3(0.84, 0.96, 1.0), clamp(core * 0.86 + (forkA + forkB) * 0.42, 0.0, 1.0));
             vec3 premultiplied = clamp(
-                color * body * 0.16 + electricColor * electric + vec3(0.46, 0.76, 1.0) * halo * activity * uGlow * 0.13,
+                color * body * 0.46 + electricColor * electric + vec3(0.46, 0.76, 1.0) * halo * activity * uGlow * 0.13,
                 vec3(0.0), vec3(alpha)
             );
             fragColor = fxFromLinearPremul(vec4(premultiplied, alpha), uOutputAlphaMode, uOutputColorEncoding);

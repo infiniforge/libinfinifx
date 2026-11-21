@@ -11,6 +11,7 @@ class LightningSpectrumTest {
         assertTrue(descriptor.inputPorts.isEmpty())
         assertTrue("audio.bands" in descriptor.metadataInterests)
         assertTrue(descriptor.parameters.any { it.name == "maxHeight" })
+        assertEquals(.04f, (descriptor.parameters.single { it.name == "idleHeight" }.defaultValue as FxParameterValue.FloatValue).value)
 
         val preset = BuiltinPresets.all.getValue("lightning-spectrum")
         val plan = FxGraphValidator.validate(preset.graph, BuiltinFx.byId)
