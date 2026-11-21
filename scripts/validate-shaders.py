@@ -6,6 +6,7 @@ import re
 import shutil
 import subprocess
 import sys
+import textwrap
 import tempfile
 from pathlib import Path
 
@@ -21,7 +22,7 @@ def main() -> int:
         return 2
     source = SOURCE.read_text(encoding="utf-8")
     shader_sources = [source, (ROOT / "fx-gles/src/main/kotlin/org/infiniforge/fx/gles/LightningSpectrumShader.kt").read_text(encoding="utf-8")]
-    shaders = {name: code for text in shader_sources for name, code in re.findall(r'const val (\w+) = """\n(.*?)\n    """', text, re.S)}
+    shaders = {name: code for text in shader_sources for name, code in re.findall(r'const val (\w+) = """(.*?)"""', text, re.S)}
     missing = EXPECTED - shaders.keys()
     if missing:
         print(f"Missing expected shader string(s): {', '.join(sorted(missing))}", file=sys.stderr)
@@ -39,7 +40,12 @@ def main() -> int:
         checked = 0
         for name in sorted(EXPECTED):
             stage = "vert" if name == "VERTEX" else "frag"
-            shader = shaders[name]
+            # Match FxShaderSource.normalize(): Kotlin raw strings include an initial newline
+            # and source indentation. GLSL requires #version to be the first non-whitespace line.
+            shader = textwrap.dedent(shaders[name]).strip()
+            if not shader.startswith("#version 300 es\n"):
+                print(f"FAIL {name}: normalized shader does not start with #version", file=sys.stderr)
+                return 1
             if stage == "frag":
                 shader = shader.replace(
                     "precision highp float;",

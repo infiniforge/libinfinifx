@@ -38,3 +38,8 @@ Surface lifecycle remains app-owned. Do not call rendering from an audio callbac
 For effect graphs, the executor copies the input once into a pooled RGBA8 target at destination dimensions, clearing the surrounding area and placing the source inside `FxGeometry.displayRect` after applying its crop and orientation. Sequential effects and branches therefore share a stable destination-sized canvas without stretching a non-matching source aspect ratio at intermediate passes. A source-only pass-through bypass skips this normalization and draws directly into the requested display rectangle. The source dimensions in frame metadata remain the original logical raster for CRT/LCD sampling.
 
 The lightning-spectrum generator uses a single cached GLES fragment program and no input textures or history surfaces. Its sixteen bands are supplied as four vec4 uniforms; the output is transparent premultiplied RGBA and can be composited by the normal graph blend node.
+
+
+## Shader source normalization
+
+Built-in shader stages are stored as indented Kotlin raw strings. The GLES backend applies the same `trimIndent()` normalization before compiling vertex and fragment source, so the GLSL ES `#version 300 es` directive is the first line passed to the driver. Shared color helpers are inserted only after the precision declaration. `scripts/validate-shaders.py` normalizes extracted strings the same way before running glslang; that syntax check is separate from device-driver compilation.

@@ -204,8 +204,9 @@ internal class GlesPassRenderer {
 
     private fun program(fragmentSource: String): Int {
         programs[fragmentSource]?.let { return it }
-        val vertex = compile(GLES30.GL_VERTEX_SHADER, FxShaders.VERTEX)
-        val preparedFragment = fragmentSource.replace("precision highp float;", "precision highp float;\n${FxShaders.COLOR_HELPERS}")
+        val vertex = compile(GLES30.GL_VERTEX_SHADER, FxShaderSource.normalize(FxShaders.VERTEX))
+        val preparedFragment = FxShaderSource.normalize(fragmentSource)
+            .replace("precision highp float;", "precision highp float;\n${FxShaderSource.normalize(FxShaders.COLOR_HELPERS)}")
         val fragment = try { compile(GLES30.GL_FRAGMENT_SHADER, preparedFragment) } catch (t: Throwable) {
             GLES30.glDeleteShader(vertex)
             throw t
@@ -258,6 +259,11 @@ internal class GlesPassRenderer {
             else -> error("Unsupported uniform value for $name: ${value::class.java.name}")
         }
     }
+}
+
+/** Removes Kotlin raw-string indentation so GLSL directives start on their required first line. */
+internal object FxShaderSource {
+    fun normalize(source: String): String = source.trimIndent()
 }
 
 /** Captures/restores the GL state the backend changes around graph execution. */

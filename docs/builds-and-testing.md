@@ -70,3 +70,15 @@ The configured CI workflow compiles JVM tests and Android modules on a hosted An
 - PASS: `ANDROID_HOME=/data/data/com.termux/files/home/android-sdk ./build.sh --no-daemon --max-workers=1 --console=plain` — 3 GLES preset-codec tests passed; the `fx-gles` AAR and sample APK assembled.
 - PASS: `python3 scripts/validate-shaders.py` — all 12 stages passed glslang syntax checks, including `LIGHTNING_SPECTRUM`.
 - `adb devices -l` reports no connected device. GLES driver compilation, actual lightning appearance, surface composition, and device performance remain unverified.
+
+
+## Shader directive fix (2026-11-21)
+
+The Infinimedia diagnostic log showed GLES rejecting every graph at shader compile time because Kotlin raw strings had a leading blank line before `#version`. The backend now normalizes vertex and fragment source before helper injection and compilation.
+
+- Added `FxShaderSourceTest` to check first-line normalization for all built-in shader stages and the lightning shader.
+- Updated `python3 scripts/validate-shaders.py` to extract the actual raw-string bodies and normalize them before syntax validation, matching the backend behavior.
+- PASS: python3 scripts/validate-shaders.py — all 12 shader stages pass glslang syntax validation after source normalization.
+- PASS: ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain — fx-gles unit tests (5 total, 0 failures), AAR assembly, and sample APK assembly completed. fx-core:test was up to date.
+- PASS: Infinimedia ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain completed against this local library checkout; the host app APK assembled.
+- adb devices -l reports no connected device. GLES driver compilation, actual rotozoom/crop display, and vertical placement remain not verified on device. The supplied screenshot predates this fix and its accompanying log records the shader compile error.

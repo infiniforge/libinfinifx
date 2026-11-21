@@ -6,7 +6,7 @@ Confirm the engine was created after a GLES 3 context became current and every c
 
 ## Shader compile/link failure
 
-The Failure message includes the driver shader or program log. Capture GL/GLSL version and device. Built-ins use GLSL ES 3.00 and require GLES 3.0. Do not assume an ES2 context can run them. Report a reproducible shader log with the graph and GPU/driver.
+The Failure message includes the driver shader or program log. Capture GL/GLSL version and device. Built-ins use GLSL ES 3.00 and require GLES 3.0. Do not assume an ES2 context can run them. The backend strips Kotlin raw-string indentation before compilation so `#version 300 es` reaches the driver on the first line. If a host still sees a `#version must be on the first line` error, verify that it is using the rebuilt library artifact. Report a reproducible shader log with the graph and GPU/driver.
 
 ## Upside-down, rotated, or cropped image
 
