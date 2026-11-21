@@ -42,14 +42,14 @@ object BuiltinFx {
             ),
         ),
         FxEffectDescriptor(
-            id = "distort:rotozoom", version = 1, title = "Album art rotozoom",
-            description = "Continuously rotates and zooms an input image; optional RMS/onset response shifts zoom and rotation.",
+            id = "distort:rotozoom", version = 2, title = "Album art rotozoom",
+            description = "Continuously rotates and zooms an input image; valid BPM scales the base rotation rate relative to 120 BPM, with optional RMS/onset accents.",
             category = FxEffectCategory.TRANSFORMER, inputPorts = listOf(FxInputPort("image")),
-            metadataInterests = setOf("audio.rms", "audio.lowEnergy", "audio.onset"),
+            metadataInterests = setOf("audio.rms", "audio.lowEnergy", "audio.onset", "audio.bpm"),
             parameters = listOf(
                 f("zoom", 1.08f, .5f, 2.5f, description = "Base image scale around the center."),
                 f("zoomPulse", .16f, 0f, .6f, description = "Autonomous zoom breathing amount."),
-                f("rotationSpeed", .32f, -4f, 4f, "rad/s", "Continuous rotation speed."),
+                f("rotationSpeed", .32f, -4f, 4f, "rad/s", "Base rotation speed at 120 BPM; valid audio BPM scales it from 0.5x to 2x."),
                 f("audioGain", .65f, 0f, 2f, description = "Optional RMS, bass and onset response; zero disables it."),
                 e("edgeMode", "mirror", listOf("clamp", "repeat", "mirror"), "Sampling behavior outside the transformed image."),
             ),

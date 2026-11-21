@@ -37,7 +37,19 @@ CRT/LCD and kaleidoscope do not inspect audio. Water uses lowEnergy/onset only w
     )
 
 ## Infinimedia adapter
+The current Infinimedia host adapter uses libinfinisound's existing PCM
+analysis and does not add a decoder or FFT analyzer. It maps the existing 16
+normalized spectrum bands directly, averages indices 0–3 for low, 4–9 for mid,
+and 10–15 for high energy, computes RMS as the root-mean-square of the existing
+normalized left/right VU RMS values, and takes peak as the maximum of the
+existing left/right peak holders. The adapter timestamps the snapshot with
+monotonic System.nanoTime() when the host receives the analyzer update.
+libinfinisound additionally estimates BPM and low-band transient events from
+those existing bands. The host maps BPM to the optional field and maps each
+fresh, sequence-numbered transient to one FxAudioEvent. Spectral flux and beat
+phase remain unavailable; the estimate is a visual cue, not a downbeat detector.
 
-The current Infinimedia host adapter uses libinfinisound's existing PCM analysis and does not add a decoder or analyzer. It maps the existing 16 normalized spectrum bands directly, averages indices 0–3 for low, 4–9 for mid, and 10–15 for high energy, computes RMS as the root-mean-square of the existing normalized left/right VU RMS values, and takes peak as the maximum of the existing left/right peak holders. The adapter timestamps the snapshot with monotonic `System.nanoTime()` when the host receives the analyzer update. It currently supplies no onset events, spectral flux, BPM, or beat phase; these stay unavailable rather than being invented.
-
-A host with its own stable transient/beat event stream can add monotonically increasing IDs and source timestamps as `FxAudioEvent`. Effects such as rotozoom accept each ID once; this library never subscribes to the player or estimates beats from PCM.
+A host with an authored or externally analyzed stable beat/transient stream can
+also provide its own monotonically increasing IDs and monotonic timestamps as
+FxAudioEvent. Effects such as rotozoom accept each ID once; this library never
+subscribes to a player or performs audio I/O.

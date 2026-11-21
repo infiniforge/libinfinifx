@@ -73,12 +73,13 @@ internal class BuiltinRuntime(
                 val energy = maxOf(frame.audio?.rms ?: 0f, (frame.audio?.lowEnergy ?: 0f) * 0.85f)
                 val audioPulse = (maxOf(onsetPulse, energy * 0.55f) * p.float("audioGain")).coerceIn(0f, 1f)
                 val edge = when (p.enum("edgeMode")) { "repeat" -> 1; "mirror" -> 2; else -> 0 }
+                val tempoScale = ((frame.audio?.bpm ?: 120f) / 120f).coerceIn(0.5f, 2f)
                 passes.draw(FxShaders.ROTOZOOM, output, listOf(image ?: error("Missing image input")), mapOf(
                     "uInput" to 0,
                     "uTime" to rotozoomTimeSeconds,
                     "uZoom" to p.float("zoom"),
                     "uZoomPulse" to p.float("zoomPulse"),
-                    "uRotationSpeed" to p.float("rotationSpeed"),
+                    "uRotationSpeed" to (p.float("rotationSpeed") * tempoScale),
                     "uAudioPulse" to audioPulse,
                     "uEdgeMode" to edge,
                 ))

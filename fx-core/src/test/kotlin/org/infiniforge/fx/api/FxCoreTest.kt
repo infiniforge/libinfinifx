@@ -75,4 +75,10 @@ class FxCoreTest {
         assertTrue(clock.plan(1_000_000_000).reset)
         assertTrue(clock.plan(1_000_000_000).reset)
     }
+
+    @Test fun rotozoomVersionDeclaresOptionalTempoInput() {
+        val rotozoom = BuiltinFx.byId.getValue("distort:rotozoom")
+        assertEquals(2, rotozoom.version)
+        assertTrue("audio.bpm" in rotozoom.metadataInterests)
+    }
 }
