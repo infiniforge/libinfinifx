@@ -17,10 +17,14 @@ internal class BuiltinRuntime(
         HeatSimulation(passes, surfaces)
     } else null
     private var waterTimeSeconds = 0f
-    private val rotozoomMotion = RotozoomMotion()
+    private val rotozoomMotion = AnimatedRotationMotion()
+    private val kaleidoscopeMotion = AnimatedRotationMotion()
     private val rotozoomEventCursor = FxEventCursor()
+    private val kaleidoscopeEventCursor = FxEventCursor()
     private var rotozoomEventTimestampNanos = -1L
     private var rotozoomEventStrength = 0f
+    private var kaleidoscopeEventTimestampNanos = -1L
+    private var kaleidoscopeEventStrength = 0f
 
     override fun render(
         frame: FxFrameInput,
@@ -71,6 +75,7 @@ internal class BuiltinRuntime(
                 val onsetPulse = if (eventAge <= 0.45f) rotozoomEventStrength * kotlin.math.exp(-eventAge * 7.5f) else 0f
                 val energy = maxOf(frame.audio?.rms ?: 0f, (frame.audio?.lowEnergy ?: 0f) * 0.85f)
                 val motion = rotozoomMotion.advance(
+                    presentationTimeNanos = frame.presentationTimeNanos,
                     deltaSeconds = frame.deltaTimeSeconds,
                     bpm = frame.audio?.bpm,
                     energy = energy,
@@ -91,11 +96,31 @@ internal class BuiltinRuntime(
             }
             "distort:kaleidoscope" -> {
                 val p = parameters
+                frame.audio?.onsetEvents.orEmpty().forEach { event ->
+                    if (kaleidoscopeEventCursor.accept(event.id)) {
+                        kaleidoscopeEventTimestampNanos = event.timestampNanos
+                        kaleidoscopeEventStrength = event.strength
+                    }
+                }
+                val eventAge = if (kaleidoscopeEventTimestampNanos < 0L) Float.POSITIVE_INFINITY else
+                    (frame.presentationTimeNanos - kaleidoscopeEventTimestampNanos).coerceAtLeast(0L) / 1_000_000_000f
+                val onsetPulse = if (eventAge <= 0.45f) kaleidoscopeEventStrength * kotlin.math.exp(-eventAge * 7.5f) else 0f
+                val audio = frame.audio
+                val energy = maxOf(audio?.rms ?: 0f, (audio?.lowEnergy ?: 0f) * 0.85f)
+                val motion = kaleidoscopeMotion.advance(
+                    presentationTimeNanos = frame.presentationTimeNanos,
+                    deltaSeconds = frame.deltaTimeSeconds,
+                    bpm = audio?.bpm,
+                    energy = energy,
+                    onset = onsetPulse,
+                    baseRotationSpeed = p.float("rotationSpeed"),
+                    audioGain = p.float("audioGain"),
+                )
                 val edge = when (p.enum("edgeMode")) { "repeat" -> 1; "mirror" -> 2; else -> 0 }
                 passes.draw(FxShaders.KALEIDOSCOPE, output, listOf(image ?: error("Missing image input")), mapOf(
                     "uInput" to 0,
                     "uSegments" to p.int("segments"),
-                    "uRotation" to p.float("rotation"),
+                    "uRotation" to p.float("rotation") + motion.rotationRadians,
                     "uZoom" to p.float("zoom"),
                     "uEdgeMode" to edge,
                 ))
@@ -203,6 +228,10 @@ internal class BuiltinRuntime(
         rotozoomEventTimestampNanos = -1L
         rotozoomEventStrength = 0f
         rotozoomMotion.reset(preservePhase = reason == FxDiscontinuity.PAUSED)
+        kaleidoscopeEventCursor.reset()
+        kaleidoscopeEventTimestampNanos = -1L
+        kaleidoscopeEventStrength = 0f
+        kaleidoscopeMotion.reset(preservePhase = reason == FxDiscontinuity.PAUSED)
         if (reason != FxDiscontinuity.PAUSED) {
             waterTimeSeconds = 0f
         }

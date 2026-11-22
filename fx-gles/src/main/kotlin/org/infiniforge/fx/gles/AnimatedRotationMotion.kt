@@ -2,14 +2,16 @@ package org.infiniforge.fx.gles
 
 import kotlin.math.exp
 
-/** Smooth, bounded motion state for the audio-aware rotozoom runtime. */
-internal class RotozoomMotion {
+/** Bounded, tempo-smoothed rotation state. Each effect runtime owns its own instance. */
+internal class AnimatedRotationMotion {
     private var elapsedSeconds = 0f
     private var rotationRadians = 0f
     private var tempoScale = 1f
     private var smoothedAudio = 0f
+    private var lastPresentationTimeNanos: Long? = null
 
     fun advance(
+        presentationTimeNanos: Long,
         deltaSeconds: Float,
         bpm: Float?,
         energy: Float,
@@ -17,7 +19,19 @@ internal class RotozoomMotion {
         baseRotationSpeed: Float,
         audioGain: Float,
     ): State {
-        val dt = deltaSeconds.takeIf(Float::isFinite)?.coerceIn(0f, MAX_STEP_SECONDS) ?: 0f
+        val previousTimestamp = lastPresentationTimeNanos
+        val timestampDelta = previousTimestamp?.let { previous ->
+            if (presentationTimeNanos > previous) {
+                (presentationTimeNanos - previous) / NANOS_PER_SECOND
+            } else {
+                0f
+            }
+        }
+        // The monotonic frame clock is authoritative. deltaSeconds is only the first-frame
+        // fallback because no previous timestamp exists yet.
+        val rawDelta = timestampDelta ?: deltaSeconds
+        val dt = rawDelta.takeIf(Float::isFinite)?.coerceIn(0f, MAX_STEP_SECONDS) ?: 0f
+        lastPresentationTimeNanos = presentationTimeNanos
         elapsedSeconds = (elapsedSeconds + dt) % TIME_WRAP_SECONDS
 
         val targetTempo = ((bpm ?: 120f) / 120f).coerceIn(MIN_TEMPO_SCALE, MAX_TEMPO_SCALE)
@@ -38,6 +52,7 @@ internal class RotozoomMotion {
             elapsedSeconds = 0f
             rotationRadians = 0f
         }
+        lastPresentationTimeNanos = null
         tempoScale = 1f
         smoothedAudio = 0f
     }
@@ -54,6 +69,7 @@ internal class RotozoomMotion {
 
     private companion object {
         const val MAX_STEP_SECONDS = 0.1f
+        const val NANOS_PER_SECOND = 1_000_000_000f
         const val TIME_WRAP_SECONDS = 600f
         const val MIN_TEMPO_SCALE = 0.5f
         const val MAX_TEMPO_SCALE = 2f

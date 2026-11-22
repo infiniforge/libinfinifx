@@ -126,3 +126,14 @@ The Infinimedia diagnostic log showed GLES rejecting every graph at shader compi
 - PASS: `python3 scripts/validate-shaders.py` — all 12 GLES stages pass glslang syntax validation. This does not replace a device-driver compile/link test.
 - PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain` — GLES AAR and sample APK assembled.
 - `adb devices -l` reports no connected device. GPU-driver compilation, screenshot confirmation that the left-edge streak is gone, and visual linewidth are **not verified on device**.
+
+
+### Band-seam lightning and effect rotation — 2026-11-21
+
+- The Pixel 8 Pro screenshot showed bright vertical seams aligned to lightning frequency-slot boundaries. fwidth was measuring across the per-slot random-path discontinuity; the shader now caps the antialias footprint to one-to-two local band pixels.
+- The library advances both rotations from monotonic frame timestamps (bounded to 100 ms per update), with the caller delta used only for the first frame. Both retain separate phases and smoothed optional tempo/audio response; defaults are 1.0 rad/s for rotozoom and 0.8 rad/s for kaleidoscope at 120 BPM (both capped at ±4 rad/s).
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./gradlew :fx-core:test :fx-gles:test --no-daemon --max-workers=1 --console=plain` — 30 portable tests passed.
+- PASS: `python3 scripts/validate-shaders.py` — all 12 GLES shader stages passed glslang syntax validation.
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --max-workers=1 --console=plain` — Android library AAR and standalone sample APK assembled.
+- The Infinimedia `:viewer-audio:testDebugUnitTest` command passed all 135 viewer-audio tests with this source checkout.
+- `adb devices -l` has no attached device. GLES driver compilation, actual motion, seam appearance, lifecycle, frame time, and thermal behavior remain unverified on hardware.

@@ -64,4 +64,9 @@ Descriptor parameters: `gain` (default 1, range 0–5; linear multiplier for nor
 
 ### Album-art rotozoom
 
-`distort:rotozoom` descriptor version 3 integrates rotation as a phase, so changing tempo cannot rescale elapsed time and jump the image angle. BPM maps to a target multiplier in 0.5–2x, smoothed with a 0.9 s time constant. RMS/onset energy is smoothed over 0.18 s. The resulting angular rate is clamped to ±4 rad/s, and frame delta is capped at 100 ms. With missing BPM, the neutral 120 BPM target is used; missing audio otherwise leaves steady autonomous motion. Onset IDs remain deduplicated per effect instance.
+`distort:rotozoom` descriptor version 4 integrates rotation as a phase, so changing tempo cannot rescale elapsed time and jump the image angle. BPM maps to a target multiplier in 0.5–2x, smoothed with a 0.9 s time constant. RMS/onset energy is smoothed over 0.18 s. The resulting angular rate is clamped to ±4 rad/s, and monotonic presentation timestamps drive rotation (the caller delta is a first-frame fallback); each step is capped at 100 ms. The default rate is 1.0 rad/s at 120 BPM. With missing BPM, the neutral 120 BPM target is used; missing audio otherwise leaves steady autonomous motion. Onset IDs remain deduplicated per effect instance.
+
+
+### Kaleidoscope
+
+`distort:kaleidoscope` descriptor version 2 starts with a 0 rad offset and continuously rotates at 0.8 rad/s by default. Its independent per-node phase advances from monotonic presentation timestamps with a 100 ms catch-up cap. Optional BPM scales the configured rate from 0.5x to 2x; RMS, low-band energy, and unique onset IDs provide bounded modulation when `audioGain` is nonzero. No audio is required for motion. Track/seek resets its phase; pause preserves phase and reinitializes the timestamp baseline.

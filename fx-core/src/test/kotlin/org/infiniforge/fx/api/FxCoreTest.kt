@@ -90,9 +90,16 @@ class FxCoreTest {
         assertEquals(6, (effect.parameters.first { it.name == "branchCount" }.defaultValue as FxParameterValue.IntValue).value)
     }
 
-    @Test fun rotozoomVersionDeclaresOptionalTempoInput() {
+    @Test fun rotatingFiltersDeclareAutonomousTempoAndAudioMotion() {
         val rotozoom = BuiltinFx.byId.getValue("distort:rotozoom")
-        assertEquals(3, rotozoom.version)
+        assertEquals(4, rotozoom.version)
+        assertEquals(1f, (rotozoom.parameters.first { it.name == "rotationSpeed" }.defaultValue as FxParameterValue.FloatValue).value)
         assertTrue("audio.bpm" in rotozoom.metadataInterests)
+
+        val kaleidoscope = BuiltinFx.byId.getValue("distort:kaleidoscope")
+        assertEquals(2, kaleidoscope.version)
+        assertEquals(.8f, (kaleidoscope.parameters.first { it.name == "rotationSpeed" }.defaultValue as FxParameterValue.FloatValue).value)
+        assertTrue("audio.bpm" in kaleidoscope.metadataInterests)
+        assertTrue("audio.onset" in kaleidoscope.metadataInterests)
     }
 }

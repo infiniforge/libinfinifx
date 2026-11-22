@@ -83,6 +83,8 @@ internal object LightningSpectrumShader {
             }
             int slot = min(int(floor(contentX * bandsAcross)), 15);
             float cellX = fract(contentX * bandsAcross);
+            // Slot noise changes discretely at each band seam; cap its derivative footprint to local pixel scale.
+            float bandPixelAa = max(fwidth(contentX) * bandsAcross, 0.00001);
             float sourceBand = 0.0;
             if (uBandCount > 0) {
                 int sourceIndex = min(int((float(slot) + 0.5) * float(uBandCount) / bandsAcross), uBandCount - 1);
@@ -103,7 +105,7 @@ internal object LightningSpectrumShader {
             float noiseA = randomSignal(animationTime * 3.5 + float(slot) * 0.29, float(slot) + 211.0) + 0.5;
             float spine = spineAt(y, float(slot), animationTime);
             float spineDistance = abs(cellX - spine);
-            float spineAa = max(fwidth(spineDistance), 0.00001);
+            float spineAa = clamp(fwidth(spineDistance), bandPixelAa, bandPixelAa * 2.0);
             float core = 1.0 - smoothstep(spineAa * 0.08, spineAa * 0.72, spineDistance);
             float outline = 1.0 - smoothstep(spineAa * 0.48, spineAa * 0.98, spineDistance);
             float halo = exp(-spineDistance / (spineAa * 3.0));
@@ -128,7 +130,7 @@ internal object LightningSpectrumShader {
                     float branchRange = smoothstep(-yAa, yAa, branchY)
                         * (1.0 - smoothstep(branchLength - yAa, branchLength + yAa, branchY)) * insideHeight;
                     float branchDistance = abs(cellX - branchX);
-                    float branchAa = max(fwidth(branchDistance), 0.00001);
+                    float branchAa = clamp(fwidth(branchDistance), bandPixelAa, bandPixelAa * 2.0);
                     float branchLine = (1.0 - smoothstep(branchAa * 0.08, branchAa * 0.72, branchDistance)) * branchRange;
                     float branchEdge = (1.0 - smoothstep(branchAa * 0.48, branchAa * 0.98, branchDistance)) * branchRange;
                     float branchLight = exp(-branchDistance / (branchAa * 3.0)) * branchRange;
@@ -150,7 +152,7 @@ internal object LightningSpectrumShader {
                     float twigRange = smoothstep(-yAa, yAa, twigY)
                         * (1.0 - smoothstep(twigLength - yAa, twigLength + yAa, twigY)) * branchRange;
                     float twigDistance = abs(cellX - twigX);
-                    float twigAa = max(fwidth(twigDistance), 0.00001);
+                    float twigAa = clamp(fwidth(twigDistance), bandPixelAa, bandPixelAa * 2.0);
                     float twigLine = (1.0 - smoothstep(twigAa * 0.08, twigAa * 0.72, twigDistance)) * twigRange;
                     float twigEdge = (1.0 - smoothstep(twigAa * 0.48, twigAa * 0.98, twigDistance)) * twigRange;
                     float twigLight = exp(-twigDistance / (twigAa * 3.0)) * twigRange;
