@@ -8,8 +8,8 @@
 - Add configurable `distort:kaleidoscope` and the `album-art-rotozoom` and `kaleidoscope` preset graphs.
 - Preserve source aspect/crop/orientation across multi-pass graph stages with one destination-sized normalization pass.
 - Render `generator:lightning-spectrum` edge to edge with outline-only lightning, linear normalized band gain, and optional eight-color palette metadata channels. Present zero-valued bands still produce zero-height output.
-- Keep lightning spines and branches at antialiased, approximately one-pixel widths; add six adjustable tendrils per trace by default, each with a short secondary twig. The 20× animation speed is unchanged.
-- Document the Infinimedia host adapter and its temporary random-stage policy.
+- Increase the antialiased lightning core slightly (about 1.4 output pixels at nominal scale) and avoid clipped jitter that could form vertical edge streaks. Six adjustable tendrils and short secondary twigs remain the default; animation speed remains 20×.
+- Document the Infinimedia host adapter and its selectable effect-chain editor.
 
 
 ## 0.1.0 — 2026-11-20

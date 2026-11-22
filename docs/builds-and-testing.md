@@ -116,5 +116,13 @@ The Infinimedia diagnostic log showed GLES rejecting every graph at shader compi
 - PASS: `ANDROID_HOME="$HOME/android-sdk" ./gradlew :fx-core:test :fx-gles:test --no-daemon --max-workers=1 --console=plain` — 26 test executions (10 core; 8 debug GLES; 8 release GLES), zero failures, errors, or skips. Tests cover descriptor v5's six-tendril default, one-pixel derivative antialiasing, and the absence of sine calls in the lightning shader.
 - PASS: `python3 scripts/validate-shaders.py` — all 12 shader stages passed glslang source validation after normalization.
 - PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain` — GLES AAR and sample APK assembled successfully.
-- The generator uses seeded hash interpolation for irregular lightning spines, tendrils, secondary twigs, idle pulse, and flicker; procedural animation remains 20×. `branchCount` replaces `boltWidth` and defaults to six side tendrils, each with a shorter twig. The stroke core is approximately one output pixel with screen-space antialiasing.
+- The generator uses seeded hash interpolation for irregular lightning spines, tendrils, secondary twigs, idle pulse, and flicker; procedural animation remains 20×. `branchCount` replaces `boltWidth` and defaults to six side tendrils, each with a shorter twig. The bright core is approximately 1.4 output pixels at nominal scale with screen-space antialiasing; spine jitter stays inside a safe band margin without clamping, avoiding straight clipped edge runs.
 - `adb devices -l` reports no attached device. Actual thin-line appearance, branch density, GLES driver compilation, and performance remain **not verified on device**.
+
+
+### Lightning edge-streak correction — 2026-11-21
+
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./gradlew :fx-core:test :fx-gles:test --no-daemon --max-workers=1 --console=plain` — 26 test executions (10 core; 8 debug GLES; 8 release GLES), no failures or skips. The GLES source assertions cover unclamped spine jitter and the slightly wider antialiased core.
+- PASS: `python3 scripts/validate-shaders.py` — all 12 GLES stages pass glslang syntax validation. This does not replace a device-driver compile/link test.
+- PASS: `ANDROID_HOME="$HOME/android-sdk" ./build.sh --no-daemon --max-workers=1 --console=plain` — GLES AAR and sample APK assembled.
+- `adb devices -l` reports no connected device. GPU-driver compilation, screenshot confirmation that the left-edge streak is gone, and visual linewidth are **not verified on device**.

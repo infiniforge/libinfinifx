@@ -96,7 +96,7 @@ Start at [docs/README.md](docs/README.md). It links architecture, API, rendering
 `generator:lightning-spectrum` is an original GLES generator that draws only
 lightning paths across the full output width and height by default; it does not
 draw filled rectangular bars. Its core strokes use screen-space antialiasing at
-roughly one output pixel. Six thin side tendrils and a short secondary twig per
+roughly 1.4 output pixels at nominal scale. Six thin side tendrils and a short secondary twig per
 tendril are drawn for each frequency trace by default. It reads optional normalized
 `AudioFrameMetadata.bands`, makes present zero-valued bands exactly zero height,
 and emits an optional idle preview only when bands are missing. Hosts may send
