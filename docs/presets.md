@@ -25,8 +25,9 @@ Connections use from, to, and input; source is the reserved input node ID. Every
 - heat-haze — source → distort:heat-ripple → output.
 - album-art-rotozoom — source → distort:rotozoom → output; optional energy/onset-driven zoom and rotation.
 - kaleidoscope — source → distort:kaleidoscope → output.
-- lightning-spectrum — optional `AudioFrameMetadata.bands` → full-width `generator:lightning-spectrum` → transparent output layer.
 - audio-fire-overlay — source + generator:fire → composite:blend → output.
+- lightning-spectrum — optional `AudioFrameMetadata.bands` → full-width `generator:lightning-spectrum` → transparent output layer.
+- text-scroller — host-supplied `FxTextInput` → generator:text-scroller → output; use `positionSeconds` and `durationSeconds` from the selected item's timeline for the beginning/end title cards.
 
 Examples are checked in under ../presets/. For example, [water-over-image.json](../presets/water-over-image.json) has no hardware-specific fields.
 

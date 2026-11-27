@@ -124,6 +124,7 @@ data class FxFrameInput(
     val channels: FxMetadataChannels = FxMetadataChannels(),
     val workingColorSpace: FxWorkingColorSpace = FxWorkingColorSpace.LINEAR_SRGB,
     val randomSeed: Long = 0L,
+    val text: FxTextInput? = null,
 ) {
     init {
         require(presentationTimeNanos >= 0 && frameIndex >= 0)
@@ -132,6 +133,21 @@ data class FxFrameInput(
             "Source texture dimensions must match frame geometry"
         }
     }
+}
+
+/** Host-selected text content and timeline position for text-aware generators. */
+data class FxTextInput(
+    val value: String,
+    val positionSeconds: Float = 0f,
+    val durationSeconds: Float? = null,
+) {
+    init {
+        require(value.length <= MAX_LENGTH) { "Text input must be at most $MAX_LENGTH UTF-16 code units" }
+        require(positionSeconds.isFinite() && positionSeconds >= 0f)
+        require(durationSeconds == null || (durationSeconds.isFinite() && durationSeconds >= 0f))
+    }
+
+    companion object { const val MAX_LENGTH = 4096 }
 }
 
 /** Caller-owned draw destination. attachedTextureName enables feedback-loop detection when known. */

@@ -35,6 +35,25 @@ internal class SurfacePool(
         if (leased.remove(surface)) free += surface
     }
 
+    /** Include cached non-FBO textures, such as generated glyph strips, in the shared GPU budget. */
+    fun reserveExternalTexture(width: Int, height: Int): Long {
+        require(width in 1..maxTextureSize && height in 1..maxTextureSize) {
+            "Generated texture ${width}x${height} exceeds GLES max texture size ${maxTextureSize}"
+        }
+        val bytes = width.toLong() * height.toLong() * 4L
+        while (allocatedBytes + bytes > maxBytes && free.isNotEmpty()) delete(free.removeAt(0))
+        check(allocatedBytes + bytes <= maxBytes) {
+            "FX render-target budget exceeded: generated texture needs $bytes bytes with $allocatedBytes/$maxBytes already allocated"
+        }
+        allocatedBytes += bytes
+        return bytes
+    }
+
+    fun releaseExternalTexture(bytes: Long) {
+        require(bytes >= 0 && bytes <= allocatedBytes) { "Invalid external texture budget release" }
+        allocatedBytes -= bytes
+    }
+
     fun trimFree() {
         val discarded = free.toList()
         free.clear()

@@ -3,8 +3,10 @@
 ## 0.1.1 — Unreleased
 
 - Add full-width `generator:lightning-spectrum` with an original animated lightning shader, normalized 16-band input, an idle preview, and an alpha-compositable preset.
-## 0.1.1 — Unreleased
 
+- Add registry-backed `BuiltinFx.availableFilters` and `availableGenerators` lists.
+- Add host-supplied `FxTextInput` and `generator:text-scroller` with configurable font family, angle, size, scroll speed, and timed title overlays.
+- Add the text-scroller preset and document host data selection versus library processing ownership.
 - Add animated `distort:rotozoom` with optional normalized RMS/low-band and onset-event response.
 - Add configurable `distort:kaleidoscope`.
 - Add `album-art-rotozoom` and `kaleidoscope` preset graphs.

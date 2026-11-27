@@ -21,6 +21,10 @@ object BuiltinPresets {
             FxGraph("lightning-spectrum", listOf(FxNode("spectrum", "generator:lightning-spectrum")), emptyList(), "spectrum"),
         ),
         FxPreset(
+            "text-scroller", "Host-supplied text in a looping, angled scroller with a timed MTV Style title card.",
+            FxGraph("text-scroller", listOf(FxNode("scroll", "generator:text-scroller")), emptyList(), "scroll"),
+        ),
+        FxPreset(
             "audio-fire-overlay", "Independent transparent fire generator composited over the input image.",
             FxGraph(
                 "audio-fire-overlay",

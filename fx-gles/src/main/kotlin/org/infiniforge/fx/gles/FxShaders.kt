@@ -373,6 +373,51 @@ internal object FxShaders {
         }
     """
 
+    const val TEXT_SCROLLER = """
+        #version 300 es
+        precision highp float;
+        in vec2 vUv;
+        uniform sampler2D uMain;
+        uniform sampler2D uLabel;
+        uniform vec2 uMainSize;
+        uniform vec2 uLabelFraction;
+        uniform vec2 uOutputSize;
+        uniform float uAngle;
+        uniform float uScrollOffset;
+        uniform int uLabelVisible;
+        uniform int uAlphaMode0;
+        uniform int uAlphaMode1;
+        uniform int uColorEncoding0;
+        uniform int uColorEncoding1;
+        uniform int uOutputAlphaMode;
+        uniform int uOutputColorEncoding;
+        out vec4 fragColor;
+        void main() {
+            vec2 centeredPixels = (vUv - vec2(0.5)) * uOutputSize;
+            float angle = radians(uAngle);
+            float c = cos(angle);
+            float s = sin(angle);
+            vec2 rotated = vec2(c * centeredPixels.x - s * centeredPixels.y,
+                                s * centeredPixels.x + c * centeredPixels.y);
+            float textX = rotated.x + uOutputSize.x * 0.5 + uScrollOffset;
+            float textY = rotated.y + uMainSize.y * 0.5;
+            vec4 mainColor = vec4(0.0);
+            if (textY >= 0.0 && textY <= uMainSize.y) {
+                vec2 mainUv = vec2(fract(textX / uMainSize.x), 1.0 - textY / uMainSize.y);
+                mainColor = fxToLinearPremul(texture(uMain, mainUv), uAlphaMode0, uColorEncoding0);
+            }
+            if (uLabelVisible == 1 && all(greaterThan(uLabelFraction, vec2(0.0)))) {
+                vec2 labelUv = (vUv - vec2(0.5, 0.89)) / uLabelFraction + vec2(0.5);
+                labelUv.y = 1.0 - labelUv.y;
+                if (all(greaterThanEqual(labelUv, vec2(0.0))) && all(lessThanEqual(labelUv, vec2(1.0)))) {
+                    vec4 labelColor = fxToLinearPremul(texture(uLabel, labelUv), uAlphaMode1, uColorEncoding1);
+                    mainColor = labelColor + mainColor * (1.0 - labelColor.a);
+                }
+            }
+            fragColor = fxFromLinearPremul(mainColor, uOutputAlphaMode, uOutputColorEncoding);
+        }
+    """
+
     const val BLEND = """
         #version 300 es
         precision highp float;

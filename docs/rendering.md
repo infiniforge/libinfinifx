@@ -2,7 +2,7 @@
 
 ## GLES and resources
 
-The backend requires a current OpenGL ES 3.0+ context (Android API 26+). GlesCapabilities.query reads the actual GL/GLSL version, extension set, and GL_MAX_TEXTURE_SIZE. Built-ins use RGBA8 textures/FBOs, fullscreen triangle shaders, and no float-render-target extension. No CPU bitmap allocation/readback occurs in the live pass loop.
+The backend requires a current OpenGL ES 3.0+ context (Android API 26+). GlesCapabilities.query reads the actual GL/GLSL version, extension set, and GL_MAX_TEXTURE_SIZE. Built-ins use RGBA8 textures/FBOs, fullscreen triangle shaders, and no float-render-target extension. Image effects do not allocate or read back CPU bitmaps. The text scroller rasterizes a bounded (16 MiB maximum) Android bitmap only when its supplied text, font, or size changes, uploads it as a cached GL texture, and releases it with the node runtime. Its GPU allocations count against the engine's shared 128 MiB texture budget. Text is rendered as one line; exceptionally long strings are horizontally compressed to fit the texture cap.
 
 The host owns its EGL context, source texture, output framebuffer, and any Surface/SurfaceTexture. The engine owns cached shader programs, pooled intermediate RGBA8 textures/FBOs, and per-node heat field targets until close or context loss. Source textures must use texture name greater than zero and remain alive during render. Output FBO name zero is valid. The attached texture name is optional but recommended for alias detection.
 
@@ -36,5 +36,3 @@ Surface lifecycle remains app-owned. Do not call rendering from an audio callbac
 ## Graph source geometry
 
 For effect graphs, the executor copies the input once into a pooled RGBA8 target at destination dimensions, clearing the surrounding area and placing the source inside `FxGeometry.displayRect` after applying its crop and orientation. Sequential effects and branches therefore share a stable destination-sized canvas without stretching a non-matching source aspect ratio at intermediate passes. A source-only pass-through bypass skips this normalization and draws directly into the requested display rectangle. The source dimensions in frame metadata remain the original logical raster for CRT/LCD sampling.
-
-The lightning-spectrum generator uses a single cached GLES fragment program and no input textures or history surfaces. Its sixteen bands are supplied as four vec4 uniforms; the output is transparent premultiplied RGBA and can be composited by the normal graph blend node.

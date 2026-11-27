@@ -119,6 +119,18 @@ object BuiltinFx {
             ),
         ),
         FxEffectDescriptor(
+            id = "generator:text-scroller", version = 1, title = "Text scroller",
+            description = "Scrolls host-supplied text in a selected Android font, with an MTV Style title card at the beginning and end of a timed item.",
+            category = FxEffectCategory.GENERATOR, inputPorts = emptyList(),
+            parameters = listOf(
+                e("fontFamily", "casual", listOf("casual", "cursive", "serif", "sans", "mono"), "Android font family used to rasterize the supplied text."),
+                f("size", .22f, .05f, .8f, "output height", "Text height relative to the output height."),
+                f("angle", 0f, -180f, 180f, "degrees", "Text-line rotation around the output center."),
+                f("scrollSpeed", 120f, 0f, 2000f, "output pixels/s", "Leftward scroll speed; zero holds the text in place."),
+                f("labelDurationSeconds", 8f, 5f, 10f, "seconds", "How long the MTV Style title is shown at the start and end of the supplied timed item."),
+            ),
+        ),
+        FxEffectDescriptor(
             id = "composite:blend", version = 1, title = "Blend layers",
             description = "Composites base and overlay branches in explicit alpha or additive mode.",
             category = FxEffectCategory.COMPOSITOR, inputPorts = listOf(FxInputPort("base"), FxInputPort("overlay")),
@@ -129,4 +141,12 @@ object BuiltinFx {
         ),
     )
     val byId: Map<String, FxEffectDescriptor> = descriptors.associateBy { it.id }
+    /** Available image filters (transformers and display treatments), in stable built-in order. */
+    val availableFilters: List<FxEffectDescriptor> = descriptors.filter {
+        it.category == FxEffectCategory.TRANSFORMER || it.category == FxEffectCategory.DISPLAY
+    }
+    /** Available generators, in stable built-in order. */
+    val availableGenerators: List<FxEffectDescriptor> = descriptors.filter {
+        it.category == FxEffectCategory.GENERATOR
+    }
 }

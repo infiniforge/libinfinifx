@@ -25,6 +25,10 @@ libinfinifx is a rendering library, not an Android application. It consumes a ca
 
 There are no app or sibling-project imports and no runtime library dependencies beyond Android/GLES and fx-core. Android SDK and Gradle plugins are build-time dependencies. No Maven artifact is published.
 
+## Host data and effect discovery
+
+The host chooses and supplies the current data, such as an image texture, text frame, normalized audio analysis, or namespaced modulation channels. It owns source selection and timestamps. InfiniFX owns reusable generation, filtering, and compositing: text frames can be rendered by `generator:text-scroller`, images can enter filters, and audio/channels can modulate built-ins that declare those interests. The portable `BuiltinFx.availableFilters` and `BuiltinFx.availableGenerators` lists are derived from the central descriptor registry for host-side effect browsers. Adding a built-in descriptor makes it discoverable to consumers; the GLES backend also needs its matching runtime implementation.
+
 ## Graph model and execution
 
 The graph is a DAG of at most 64 nodes and 128 connections. The synthetic node ID source denotes the caller's input texture. Each effect has one color output and named required input ports. A connection maps one source output into one input port; blend currently has base and overlay ports. Nodes are topologically sorted in stable input order. Unknown effects/parameters, missing or duplicate ports, cycles, missing output, dangling nodes, and output nodes that feed later nodes fail validation before GPU work.
@@ -44,7 +48,3 @@ Frame geometry carries source crop/orientation and destination placement. The en
 ## Deliberate omissions
 
 There is no general visual-programming editor, user GLSL, shader hot reload, shared mutable simulation, temporal CRT phosphor or LCD ghost history, arbitrary layer stacks beyond explicit graph nodes, GPU timestamp query API, export/readback pipeline, or GLES2/Vulkan/AGSL backend. An Infinimedia artwork/static-image host adapter now consumes the public API; other application integrations remain separate and require runtime acceptance.
-
-## Lightning spectrum generator
-
-The input-free `generator:lightning-spectrum` reads only the current immutable audio-band snapshot, timestamp, and graph parameters. It writes a full-target-width transparent layer with sixteen colored jagged electric columns. A host graph connects this node to an explicit blend; the effect has no dependency on album-art or audio-decoder code and allocates no per-frame textures.

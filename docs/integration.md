@@ -24,7 +24,7 @@ The included build substitutes this coordinate with its source project. Pin an e
 
 ## Infinimedia
 
-Infinimedia consumes the pinned `fx-gles` source dependency in `modules/viewer-audio`. Its app-owned `FxArtworkView` creates and closes `GlesFxEngine` on its GLES 3 render thread, uploads bitmap artwork to a host-owned `GL_TEXTURE_2D`, and draws into its transparent Android surface. `RandomFxPipeline` creates a two-stage DAG from built-in filter IDs and replaces one stage with a different random effect when the playlist visual item changes. This random policy is temporary test behavior; it is isolated from the renderer and can later be replaced with deliberate effect selection without changing the library contracts.
+Infinimedia consumes the pinned `fx-gles` source dependency in `modules/viewer-audio`. Its app-owned `FxArtworkView` creates and closes `GlesFxEngine` on its GLES 3 render thread, uploads bitmap artwork to a host-owned `GL_TEXTURE_2D`, and draws into its transparent Android surface. Media chooses which current item data to supply (for example an image texture, text frame, or frequency-graph modulation); InfiniFX owns reusable generation, filtering, and compositing. `RandomFxPipeline` currently creates a two-stage DAG from built-in filter IDs and replaces one stage with a different random effect when the playlist visual item changes. This random policy is temporary test behavior; it is isolated from the renderer and can later be replaced with deliberate effect selection without changing the library contracts.
 
 The host maps the existing smoothed 16 spectrum bands and VU readings from libinfinisound's PCM analysis path into normalized `AudioFrameMetadata` RMS/peak and low/mid/high bands. It does not add a second audio analyzer or synthesize onset/beat events. Rotozoom can respond to energy now; hosts that already have stable beat/onset events may pass their timestamp and unique event IDs. Animated image, video (`GL_TEXTURE_EXTERNAL_OES` in the current playback path), and ANSI presentation remain on their existing paths; the current FX backend accepts only `GL_TEXTURE_2D`. The original artwork view remains a fallback under the effects surface. No player UI, playback logic, or app source is imported by this library.
 
@@ -42,6 +42,16 @@ InfiniCanvas owns image decoding, edits, document state, authoring, undo/history
 
 InfiniMesh owns 3D parsing, model state, camera, and scene rendering. Current libinfinemesh mesh-android is GLES2-based and texture/material support is planned. A later post-process hook would need a GLES3-compatible scene output texture or explicit copy/interop stage; this library does not parse geometry or change mesh coordinates. Preserve the model viewer's context lifecycle and depth/viewport state.
 
+## InfiniLaunch workspace switches
+
+InfiniLaunch owns swipe input, workspace selection and persistence, widget
+visibility, and the lifetime of any captured frames. It has a switch hook
+that supplies the outgoing workspace, prepared incoming workspace, and
+direction, and commits the workspace immediately by default. A future
+transition can use host-supplied textures and monotonic timing to render
+the change. At completion or a rendering failure the host can commit the
+prepared workspace. Cancellation and lifecycle changes remain host-owned.
+
 ## Lifecycle checklist for every host
 
 - Create GlesFxEngine on the rendering thread after the required context is current.
@@ -53,6 +63,11 @@ InfiniMesh owns 3D parsing, model state, camera, and scene rendering. Current li
 - Handle FxRenderResult.Failure by retaining a valid host frame or bypassing FX; do not block audio or emulation threads.
 - Keep display placement and input mapping in the app.
 
-## Lightning spectrum host usage
+### Lightning spectrum visualizer
 
-A host can add an input-free `generator:lightning-spectrum` node, connect it as the `overlay` branch of a `composite:blend`, and connect the image/filter result to `base`. Pass the host's current normalized `AudioFrameMetadata.bands` in each `FxFrameInput`; do not request audio or run analysis from the render thread. The node output spans the complete render target width. Its graph parameters may be updated from an app-owned editor; UI and saved-setting policy remain host-owned.
+A host can add an input-free `generator:lightning-spectrum` node, connect it as
+the `overlay` branch of a `composite:blend`, and connect the image/filter result
+to `base`. Pass the host's current normalized `AudioFrameMetadata.bands` in each
+`FxFrameInput`; do not request audio or run analysis from the render thread. The
+node output spans the complete render target width. Its graph parameters may be
+updated from an app-owned editor; UI and saved-setting policy remain host-owned.

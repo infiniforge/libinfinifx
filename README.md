@@ -4,9 +4,9 @@ A standalone Android library for composable GLES 3.0 image effects, simulation f
 
 ## Initial implementation status
 
-The repository contains a portable Kotlin API/graph validator and a GLES 3.0 Android backend. Built-ins include pass-through, CRT, LCD, album-art rotozoom, kaleidoscope, procedural water refraction, a private heat-field simulation with heat ripple and fire rendering, a full-width lightning-spectrum generator, and alpha/additive layer composition. Nine JSON examples and a runnable Android sample are included.
+The repository contains a portable Kotlin API/graph validator and a GLES 3.0 Android backend. Built-ins include pass-through, CRT, LCD, album-art rotozoom, kaleidoscope, procedural water refraction, a private heat-field simulation with heat ripple and fire rendering, a full-width lightning-spectrum generator, a host-text scroller generator, and alpha/additive layer composition. Nine JSON examples and a runnable Android sample are included.
 
-Recorded baseline evidence from the prior 0.1.0 revision includes passing portable graph/metadata tests, local GLES AAR/sample APK assembly, and glslang shader syntax validation. The 2026-11-20 working revision passes a fresh portable test, Android AAR/sample build, and GLSL syntax check for rotozoom, kaleidoscope, and graph geometry normalization; the Infinimedia host adapter is a separate checkout and still needs its own build. Device visuals remain unverified. GPU-driver compilation, visual correctness, device lifecycle, and performance are **not verified on device**. See [roadmap](docs/roadmap.md) and [build evidence](docs/builds-and-testing.md).
+The prior effect/geometry update passed portable tests, Android AAR/sample assembly, and glslang checks for rotozoom, kaleidoscope, and graph geometry. The current text-scroller/catalog addition passes fx-core compilation, GLES AAR assembly, and sample APK assembly. Its shader source has not received a separate glslang check, and the Infinimedia host adapter is a separate checkout. GPU-driver compilation, visual correctness, device lifecycle, and performance are **not verified on device**. See [roadmap](docs/roadmap.md) and [build evidence](docs/builds-and-testing.md).
 
 ## Standalone build
 
@@ -73,12 +73,14 @@ See [API](docs/api.md) for exact lifecycle and error behavior. The sample Activi
 - audio-fire-overlay
 - album-art-rotozoom
 - kaleidoscope
+- text-scroller
+- lightning-spectrum
 
 Preset JSON is versioned independently from the library package. See [preset schema and examples](docs/presets.md).
 
 ## Boundaries and limits
 
-- No app source dependency; no audio decoding or analysis; no image/model/media codecs.
+- No app source dependency; no audio decoding or analysis; no image/model/media codecs. Hosts select and supply source data such as image textures, text frames, and optional modulation snapshots; InfiniFX owns reusable generators, filters, and compositing.
 - No global mutable effect state. Each heat/fire graph node owns its own heat field.
 - GLES 3.0 only. External OES textures require a host copy adapter and currently return an explicit unsupported-target result.
 - RGBA8 internal targets and a 128 MiB default pool budget; no float render-target dependency, CPU readback, Vulkan, AGSL, phosphor history, or LCD ghosting yet.
@@ -89,7 +91,6 @@ Preset JSON is versioned independently from the library package. See [preset sch
 ## Documentation
 
 Start at [docs/README.md](docs/README.md). It links architecture, API, rendering, effects, simulation, audio metadata, presets, app integration, compatibility, testing, roadmap, troubleshooting, and third-party provenance.
-
 
 ## Lightning-spectrum generator
 

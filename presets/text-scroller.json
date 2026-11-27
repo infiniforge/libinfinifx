@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "name": "text-scroller",
+  "description": "Host-supplied text in a looping, angled scroller with a timed MTV Style title card.",
+  "graph": {
+    "name": "text-scroller",
+    "outputNodeId": "scroll",
+    "nodes": [
+      {
+        "id": "scroll",
+        "effectId": "generator:text-scroller",
+        "enabled": true,
+        "parameters": {
+          "fontFamily": { "type": "enum", "value": "casual" },
+          "size": { "type": "float", "value": 0.22 },
+          "angle": { "type": "float", "value": 0.0 },
+          "scrollSpeed": { "type": "float", "value": 120.0 },
+          "labelDurationSeconds": { "type": "float", "value": 8.0 }
+        }
+      }
+    ],
+    "connections": []
+  }
+}

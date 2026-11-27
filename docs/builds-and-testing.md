@@ -46,6 +46,19 @@ Environment: Termux on Android, Linux aarch64, OpenJDK 21.0.13.1, Gradle 9.7.1 w
 - A first `./build.sh` without Android SDK environment failed during `:fx-gles:testDebugUnitTest` dependency setup because SDK location was not set. The documented retry with `ANDROID_HOME` passed.
 - The Infinimedia adapter and its host-side unit tests have not yet been built in this checkout. No GLES driver, Android device, screenshot, or performance run was performed. The source changes are not visually verified on device.
 
+## Text-scroller and registry addition (2026-11-20)
+
+- PASS: `ANDROID_HOME=/data/data/com.termux/files/home/android-sdk ./gradlew :fx-core:compileKotlin :fx-gles:assembleDebug :sample:assembleDebug --no-daemon --max-workers=1 --console=plain -Pandroid.aapt2FromMavenOverride=/data/data/com.termux/files/usr/bin/aapt2` — fx-core compilation, GLES AAR assembly, and sample APK assembly completed.
+- The build emitted the installed SDK XML v4 compatibility warning, the experimental Termux aapt2 override warning, and Gradle deprecation notices. No test task or standalone GLSL syntax checker was run for this addition. No GLES device visual check was run.
+
+## Lightning-spectrum generator addition (2026-11-20)
+
+- PASS: `./gradlew :fx-core:test --max-workers=1 --console=plain` — 8 portable JVM tests passed.
+- PASS: `ANDROID_HOME=/data/data/com.termux/files/home/android-sdk ./build.sh --no-daemon --max-workers=1 --console=plain` — 3 GLES preset-codec tests passed; the `fx-gles` AAR and sample APK assembled.
+- PASS: `python3 scripts/validate-shaders.py` — all 12 stages passed glslang syntax checks, including `LIGHTNING_SPECTRUM`.
+- Infinimedia graph wiring/editor changes and these library changes have not yet received an Android build in the consuming repository at the time of this record.
+- `adb devices -l` reports no connected device. GLES driver compilation, actual lightning appearance, surface composition, and device performance remain unverified.
+
 ## Portable coverage
 
 FxCoreTest covers parameter ranges/defaults, branch/topological ordering, missing required inputs, cycle rejection, event ID dedup/reset, invalid metadata sanitization, and bounded fixed-step planning. FxPresetJsonTest covers all built-in preset round-trips, graph validation after decode, unsupported schema versions, and unknown-field rejection. These are not GPU shader tests.
@@ -63,10 +76,3 @@ On a GLES 3 emulator/device, build the sample and test:
 8. Record device model, Android, GLES/GLSL versions, output size, graph, observed frame times/FPS, and thermal conditions. No performance target is claimed until measured.
 
 The configured CI workflow compiles JVM tests and Android modules on a hosted Android SDK runner. CI cannot establish GPU visual/device acceptance.
-
-## Lightning-spectrum generator addition (2026-11-20)
-
-- PASS: `./gradlew :fx-core:test --max-workers=1 --console=plain` — 8 portable JVM tests passed.
-- PASS: `ANDROID_HOME=/data/data/com.termux/files/home/android-sdk ./build.sh --no-daemon --max-workers=1 --console=plain` — 3 GLES preset-codec tests passed; the `fx-gles` AAR and sample APK assembled.
-- PASS: `python3 scripts/validate-shaders.py` — all 12 stages passed glslang syntax checks, including `LIGHTNING_SPECTRUM`.
-- `adb devices -l` reports no connected device. GLES driver compilation, actual lightning appearance, surface composition, and device performance remain unverified.

@@ -21,6 +21,9 @@ internal class BuiltinRuntime(
     private val rotozoomEventCursor = FxEventCursor()
     private var rotozoomEventTimestampNanos = -1L
     private var rotozoomEventStrength = 0f
+    private val textScrollerTextures: TextScrollerTextures? =
+        if (effectId == "generator:text-scroller") TextScrollerTextures(surfaces) else null
+    private var textScrollTimeSeconds = 0f
 
     override fun render(
         frame: FxFrameInput,
@@ -157,6 +160,30 @@ internal class BuiltinRuntime(
                     },
                 ))
             }
+            "generator:text-scroller" -> {
+                val content = frame.text ?: error("Text scroller requires FxFrameInput.text")
+                val textures = textScrollerTextures ?: error("Text scroller textures were not prepared")
+                val family = parameters.enum("fontFamily")
+                val main = textures.main(content.value, family, output.height, parameters.float("size"))
+                val label = textures.label(family, output.height)
+                textScrollTimeSeconds = (textScrollTimeSeconds + frame.deltaTimeSeconds.coerceIn(0f, 0.1f)) % 600f
+                val window = parameters.float("labelDurationSeconds")
+                val showAtEnd = content.durationSeconds?.let {
+                    content.positionSeconds <= it && it - content.positionSeconds <= window
+                } ?: false
+                val showLabel = content.positionSeconds <= window || showAtEnd
+                val scrollOffset = (textScrollTimeSeconds * parameters.float("scrollSpeed")) % main.width
+                passes.draw(FxShaders.TEXT_SCROLLER, output, listOf(main, label), mapOf(
+                    "uMain" to 0,
+                    "uLabel" to 1,
+                    "uMainSize" to floatArrayOf(main.width.toFloat(), main.height.toFloat()),
+                    "uLabelFraction" to floatArrayOf(label.width.toFloat() / output.width, label.height.toFloat() / output.height),
+                    "uOutputSize" to floatArrayOf(output.width.toFloat(), output.height.toFloat()),
+                    "uAngle" to parameters.float("angle"),
+                    "uScrollOffset" to scrollOffset,
+                    "uLabelVisible" to if (showLabel) 1 else 0,
+                ))
+            }
             "composite:blend" -> {
                 val p = parameters
                 val base = inputs["base"] ?: error("Missing base input")
@@ -179,9 +206,13 @@ internal class BuiltinRuntime(
         if (reason != FxDiscontinuity.PAUSED) {
             waterTimeSeconds = 0f
             rotozoomTimeSeconds = 0f
+            textScrollTimeSeconds = 0f
         }
     }
-    override fun close() { heat?.close() }
+    override fun close() {
+        heat?.close()
+        textScrollerTextures?.close()
+    }
 }
 
 private class HeatSimulation(

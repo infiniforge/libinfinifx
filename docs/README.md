@@ -1,6 +1,6 @@
 # Documentation index
 
-Current maturity: source implementation includes pass-through, compositing, CRT/LCD, water/heat, fire, rotozoom, kaleidoscope, and the full-width audio lightning-spectrum generator. Recorded portable JVM/Android builds and shader checks apply to the previous baseline; the current unreleased effect and geometry updates still need fresh build checks. GPU-driver shader validation, visual output, device lifecycle, and performance need device acceptance.
+Current maturity: source implementation includes pass-through, compositing, CRT/LCD, water/heat, fire, rotozoom, kaleidoscope, a host-text scroller, and the full-width audio lightning-spectrum generator. Built-in filters and generators are discoverable through fx-core. The current source compiles and assembles the GLES AAR and sample APK; the lightning-spectrum shader still needs source-level syntax and device visual acceptance. GPU-driver shader validation, device lifecycle, and performance need device acceptance.
 
 - [Architecture](architecture.md) — modules, graph execution, state ownership, and design limits.
 - [API](api.md) — implemented Kotlin classes, ownership, thread rules, examples, and errors.
@@ -8,7 +8,7 @@ Current maturity: source implementation includes pass-through, compositing, CRT/
 - [Effects](effects.md) — implemented descriptors, defaults, ranges, and limitations.
 - [Simulation](simulation.md) — heat field, procedural water surface, stepping, and reset policy.
 - [Audio metadata](audio-metadata.md) — units, events, sanitization, and host mapping.
-- [Presets](presets.md) — schema-v1 JSON and the nine example graphs.
+- [Presets](presets.md) — schema-v1 JSON and the ten example graphs.
 - [Integration](integration.md) — source dependency setup and app-specific future integration boundaries.
 - [Builds and testing](builds-and-testing.md) — exact commands, shader syntax helper, and recorded evidence.
 - [Compatibility](compatibility.md) — SDK/GLES support, budgets, schema compatibility, and unsupported targets.
